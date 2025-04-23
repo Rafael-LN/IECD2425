@@ -9,6 +9,12 @@ public class ClientSession {
         this.loggedIn = true;
     }
 
+    public void logout() {
+        this.username = null;
+        this.loggedIn = false;
+    }
+
+
     public String getUsername() { return username; }
     public boolean isLoggedIn() { return loggedIn; }
 }
