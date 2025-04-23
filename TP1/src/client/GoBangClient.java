@@ -1,20 +1,24 @@
 package client;
 
 import client.handler.*;
+import gui.MainWindow;
 
 public class GoBangClient {
 
     private final ClientSession session;
     private final ClientCommunicationHandler communication;
+    private final MainWindow gui;
 
     public GoBangClient(String ip, int port) {
         this.session = new ClientSession();
-        ClientMessageHandler handler = new ClientMessageHandler(session);
+        this.gui = new MainWindow(this);
+        ClientMessageHandler handler = new ClientMessageHandler(session, gui);
         this.communication = new ClientCommunicationHandler(ip, port, handler);
     }
 
     public void start() {
         communication.connect();
+        gui.setVisible(true);
     }
 
     public void login(String username, String password) {
@@ -25,6 +29,10 @@ public class GoBangClient {
     public void register(String username, String password, int age, String nationality, String photo) {
         session.login(username); // também queremos saber quem se está a registar
         communication.sendRegister(username, password, age, nationality, photo);
+    }
+
+    public MainWindow getGui() {
+        return gui;
     }
 
     public static void main(String[] args) {
