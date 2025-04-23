@@ -33,4 +33,12 @@ public class XmlMessageBuilder {
                 "<firstPlayer>" + firstPlayer + "</firstPlayer>" +
                 "</gameStart>";
     }
+
+    public static String buildResponse(String status, String message) {
+        return "<response>" +
+                "<status>" + status + "</status>" +
+                "<message>" + message + "</message>" +
+                "</response>";
+    }
+
 }
