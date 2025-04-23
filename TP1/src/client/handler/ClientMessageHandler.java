@@ -25,26 +25,26 @@ public class ClientMessageHandler {
                 String operation = XmlMessageReader.getTextValue(doc, "operation");
 
                 if (operation == null) {
-                    // Fallback to string matching if operation not explicitly provided
                     operation = determineOperationType(msg);
                 }
 
                 if ("success".equals(status)) {
-                    System.out.println("✅ " + msg);
+                    System.out.println("✅ SUCESSO: " + msg);
 
                     switch (operation) {
                         case "login" -> {
-                            session.login(session.getUsername());
                             gui.onLoginSuccess(session.getUsername());
                         }
                         case "register" -> {
+                            // Auto-login após registo
                             session.login(session.getUsername());
                             gui.onRegisterSuccess(session.getUsername());
                         }
                         case "findMatch" -> {
-                            // Handle matchmaking success if needed
+                            // Em breve: iniciar jogo ou mostrar estado
                         }
                     }
+
                 } else {
                     // Handle failures
                     switch (operation) {
@@ -56,12 +56,11 @@ public class ClientMessageHandler {
             }
 
             case "gameStart" -> {
-                System.out.println("🎮 Jogo a começar...");
-
                 String you = XmlMessageReader.getTextValue(doc, "player");
                 String opponent = XmlMessageReader.getTextValue(doc, "opponent");
                 boolean youStart = Boolean.parseBoolean(XmlMessageReader.getTextValue(doc, "firstToPlay"));
 
+                System.out.println("🎮 Match iniciado com: " + opponent + " | Primeiro a jogar: " + (youStart ? you : opponent));
                 gui.onGameStart(you, opponent, youStart);
             }
         }
