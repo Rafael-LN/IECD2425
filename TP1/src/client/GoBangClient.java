@@ -1,8 +1,41 @@
 package client;
 
-/**
- * This class represents the client-side of the game.
- * It handles the connection to the server and manages player interactions.
- */
+import client.handler.*;
+
 public class GoBangClient {
+
+    private final ClientSession session;
+    private final ClientCommunicationHandler communication;
+
+    public GoBangClient(String ip, int port) {
+        this.session = new ClientSession();
+        ClientMessageHandler handler = new ClientMessageHandler(session);
+        this.communication = new ClientCommunicationHandler(ip, port, handler);
+    }
+
+    public void start() {
+        communication.connect();
+    }
+
+    public void login(String username, String password) {
+        session.login(username); // guarda temporariamente para que o handler saiba quem é
+        communication.sendLogin(username, password);
+    }
+
+    public void register(String username, String password, int age, String nationality, String photo) {
+        session.login(username); // também queremos saber quem se está a registar
+        communication.sendRegister(username, password, age, nationality, photo);
+    }
+
+    public static void main(String[] args) {
+        String ip = args.length > 0 ? args[0] : "127.0.0.1";
+        int port = args.length > 1 ? Integer.parseInt(args[1]) : 8080;
+
+        GoBangClient client = new GoBangClient(ip, port);
+        client.start();
+
+        // Teste
+        client.register("joao", "joao123", 21, "Portugal", "/fotos/joao.jpg");
+        client.login("joao", "joao123");
+    }
 }
