@@ -1,4 +1,4 @@
-package client.handlers;
+package client.handler;
 
 /**
  * ClientCommunicationThread handles the communication between the client and the server.
