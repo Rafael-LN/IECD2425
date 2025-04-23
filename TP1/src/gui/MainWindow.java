@@ -70,9 +70,9 @@ public class MainWindow extends JFrame implements GameClientListener {
     }
 
     @Override
-    public void onLoginSuccess() {
+    public void onLoginSuccess(String username) {
         SwingUtilities.invokeLater(() -> {
-            Lobby lobby = new Lobby(this, client.getSession().getUsername());
+            Lobby lobby = new Lobby(this, username);
             cardPanel.add(lobby, PanelType.LOBBY.name());
             changePanel(PanelType.LOBBY);
         });
@@ -85,10 +85,13 @@ public class MainWindow extends JFrame implements GameClientListener {
     }
 
     @Override
-    public void onRegisterSuccess() {
+    public void onRegisterSuccess(String username) {
         showInfo("Registo completo", "Utilizador registado com sucesso.");
-        changePanel(PanelType.LOGIN);
+        Lobby lobby = new Lobby(this, username);
+        cardPanel.add(lobby, PanelType.LOBBY.name());
+        changePanel(PanelType.LOBBY);
     }
+
 
     @Override
     public void onRegisterError(String msg) {

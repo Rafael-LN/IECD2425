@@ -1,10 +1,10 @@
 package common;
 
 public interface GameClientListener {
-    void onLoginSuccess();
+    void onLoginSuccess(String username);
     void onLoginError(String msg);
 
-    void onRegisterSuccess();
+    void onRegisterSuccess(String username);
     void onRegisterError(String msg);
 
     // Futuro: outros eventos

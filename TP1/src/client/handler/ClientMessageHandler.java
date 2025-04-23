@@ -29,12 +29,12 @@ public class ClientMessageHandler {
                     // Detetar login com base na mensagem
                     if (msg.toLowerCase().contains("login")) {
                         session.login(session.getUsername()); // valor temporário — idealmente definido antes
-                        gui.onLoginSuccess();
+                        gui.onLoginSuccess(session.getUsername());
                     }
 
                     // Detetar registo com base na mensagem
                     if (msg.toLowerCase().contains("registration")) {
-                        gui.onRegisterSuccess();
+                        gui.onRegisterSuccess(session.getUsername());
                     }
 
                 } else {
