@@ -1,8 +1,11 @@
 ### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-TP1/.idea
 
 ### Eclipse ###
 .apt_generated
@@ -28,6 +31,27 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Java ###
+*.class
+*.log
+hs_err_pid*
+.mtj.tmp/
+
+### Build tools ###
+/target/
+.gradle/
+build/
+
+### Package Files ###
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### Project Specific ###
 /src/main/java/main2.iml
 /src/main/main.iml
 /*.sar
