@@ -4,24 +4,27 @@ import client.handler.*;
 
 public class GoBangClient {
 
-    private final ClientCommunicationHandler communicationHandler;
+    private final ClientSession session;
+    private final ClientCommunicationHandler communication;
 
-    public GoBangClient(String serverIp, int serverPort) {
-        ClientMessageHandler messageHandler = new ClientMessageHandler();
-        communicationHandler = new ClientCommunicationHandler(serverIp, serverPort, messageHandler);
+    public GoBangClient(String ip, int port) {
+        this.session = new ClientSession();
+        ClientMessageHandler handler = new ClientMessageHandler(session);
+        this.communication = new ClientCommunicationHandler(ip, port, handler);
     }
 
     public void start() {
-        communicationHandler.connect();
-        // Aqui podes chamar menu ou iniciar GUI
+        communication.connect();
     }
 
     public void login(String username, String password) {
-        communicationHandler.sendLogin(username, password);
+        session.login(username); // guarda temporariamente para que o handler saiba quem é
+        communication.sendLogin(username, password);
     }
 
-    public void register(String username, String password, int age, String nationality, String photoPath) {
-        communicationHandler.sendRegister(username, password, age, nationality, photoPath);
+    public void register(String username, String password, int age, String nationality, String photo) {
+        session.login(username); // também queremos saber quem se está a registar
+        communication.sendRegister(username, password, age, nationality, photo);
     }
 
     public static void main(String[] args) {
@@ -31,8 +34,8 @@ public class GoBangClient {
         GoBangClient client = new GoBangClient(ip, port);
         client.start();
 
-        // Testes temporários:
-        client.register("rafa", "1234", 25, "Portugal", "/img/rafa.jpg");
-        client.login("rafa", "1234");
+        // Teste
+        client.register("joao", "joao123", 21, "Portugal", "/fotos/joao.jpg");
+        client.login("joao", "joao123");
     }
 }
