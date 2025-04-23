@@ -71,6 +71,7 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onLoginSuccess(String username) {
+        showInfo("Login completo", "Utilizador autenticado com sucesso.");
         SwingUtilities.invokeLater(() -> {
             Lobby lobby = new Lobby(this, username);
             cardPanel.add(lobby, PanelType.LOBBY.name());
