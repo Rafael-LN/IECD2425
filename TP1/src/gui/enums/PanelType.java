@@ -1,7 +1,7 @@
 package gui.enums;
 
 public enum PanelType {
-    AUTHENTICATION("Othello Game",        400, 200),
+    AUTHENTICATION("GoBang Game",        400, 200),
     LOGIN         ("Login",               400, 250),
     REGISTRATION  ("Player Registration", 600, 300),
     LOBBY         ("Lobby",               600, 300),
