@@ -1,0 +1,39 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://tp1/game"
+           xmlns="http://tp1/game"
+           elementFormDefault="qualified">
+
+    <xs:element name="move">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="player" type="xs:string"/>
+                <xs:element name="x">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0"/>
+                            <xs:maxInclusive value="14"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="y">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0"/>
+                            <xs:maxInclusive value="14"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="gameStart">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="opponent" type="xs:string"/>
+                <xs:element name="firstPlayer" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
