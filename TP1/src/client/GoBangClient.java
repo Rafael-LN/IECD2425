@@ -1,6 +1,7 @@
 package client;
 
-import client.handler.*;
+import client.handler.ClientCommunicationHandler;
+import client.handler.ClientMessageHandler;
 import gui.MainWindow;
 
 public class GoBangClient {
@@ -35,6 +36,11 @@ public class GoBangClient {
         return gui;
     }
 
+    public ClientSession getSession() {
+        return session;
+    }
+
+
     public static void main(String[] args) {
         String ip = args.length > 0 ? args[0] : "127.0.0.1";
         int port = args.length > 1 ? Integer.parseInt(args[1]) : 8080;
@@ -46,4 +52,5 @@ public class GoBangClient {
         client.register("joao", "joao123", 21, "Portugal", "/fotos/joao.jpg");
         client.login("joao", "joao123");
     }
+
 }

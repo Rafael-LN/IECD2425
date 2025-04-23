@@ -29,6 +29,7 @@ public class MainWindow extends JFrame implements GameClientListener {
         cardPanel.add(new PlayerLogin(this), PanelType.LOGIN.name());
         cardPanel.add(new PlayerRegistration(this), PanelType.REGISTRATION.name());
 
+
         setContentPane(cardPanel);
         changePanel(PanelType.AUTHENTICATION);
     }
@@ -68,14 +69,15 @@ public class MainWindow extends JFrame implements GameClientListener {
         );
     }
 
-    // Implementação dos métodos da interface GameClientListener
-
     @Override
     public void onLoginSuccess() {
-        SwingUtilities.invokeLater(() ->
-                changePanel(PanelType.LOBBY) // ou outro painel
-        );
+        SwingUtilities.invokeLater(() -> {
+            Lobby lobby = new Lobby(this, client.getSession().getUsername());
+            cardPanel.add(lobby, PanelType.LOBBY.name());
+            changePanel(PanelType.LOBBY);
+        });
     }
+
 
     @Override
     public void onLoginError(String msg) {
