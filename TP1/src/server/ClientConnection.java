@@ -1,4 +1,4 @@
-package server.handlers;
+package server;
 
 public class ClientConnection {
 }
