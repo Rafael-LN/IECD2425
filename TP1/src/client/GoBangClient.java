@@ -42,10 +42,6 @@ public class GoBangClient {
 
         GoBangClient client = new GoBangClient(ip, port);
         client.start();
-
-        // Teste
-        client.register("joao", "joao123", 21, "Portugal", "/fotos/joao.jpg");
-        client.login("joao", "joao123");
     }
 
 }
