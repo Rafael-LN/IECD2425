@@ -22,29 +22,59 @@ public class ClientMessageHandler {
             case "response" -> {
                 String status = XmlMessageReader.getTextValue(doc, "status");
                 String msg = XmlMessageReader.getTextValue(doc, "message");
+                String operation = XmlMessageReader.getTextValue(doc, "operation");
+
+                if (operation == null) {
+                    operation = determineOperationType(msg);
+                }
 
                 if ("success".equals(status)) {
-                    System.out.println("✅ " + msg);
+                    System.out.println("✅ SUCESSO: " + msg);
 
-                    // Detetar login com base na mensagem
-                    if (msg.toLowerCase().contains("login")) {
-                        session.login(session.getUsername()); // valor temporário — idealmente definido antes
-                        gui.onLoginSuccess();
-                    }
-
-                    // Detetar registo com base na mensagem
-                    if (msg.toLowerCase().contains("registration")) {
-                        gui.onRegisterSuccess();
+                    switch (operation) {
+                        case "login" -> {
+                            gui.onLoginSuccess(session.getUsername());
+                        }
+                        case "register" -> {
+                            // Auto-login após registo
+                            session.login(session.getUsername());
+                            gui.onRegisterSuccess(session.getUsername());
+                        }
+                        case "findMatch" -> {
+                            // Em breve: iniciar jogo ou mostrar estado
+                        }
                     }
 
                 } else {
-                    System.out.println("❌ " + msg);
+                    // Handle failures
+                    switch (operation) {
+                        case "login" -> gui.onLoginError(msg);
+                        case "register" -> gui.onRegisterError(msg);
+                        default -> System.out.println("❌ " + msg);
+                    }
                 }
             }
 
             case "gameStart" -> {
-                System.out.println("🎮 Jogo a começar...");
+                String you = XmlMessageReader.getTextValue(doc, "player");
+                String opponent = XmlMessageReader.getTextValue(doc, "opponent");
+                boolean youStart = Boolean.parseBoolean(XmlMessageReader.getTextValue(doc, "firstToPlay"));
+
+                System.out.println("🎮 Match iniciado com: " + opponent + " | Primeiro a jogar: " + (youStart ? you : opponent));
+                gui.onGameStart(you, opponent, youStart);
             }
         }
+    }
+
+    private String determineOperationType(String message) {
+        String lowerMessage = message.toLowerCase();
+        if (lowerMessage.contains("login")) {
+            return "login";
+        } else if (lowerMessage.contains("registo")) {
+            return "register";
+        } else if (lowerMessage.contains("partida") || lowerMessage.contains("jogo")) {
+            return "findMatch";
+        }
+        return "unknown";
     }
 }

@@ -1,5 +1,6 @@
 package gui;
 
+import gui.enums.PanelType;
 import gui.utils.GuiUtils;
 import gui.utils.NumericDocumentFilter;
 
@@ -32,6 +33,12 @@ public class PlayerRegistration extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
+
+        JButton backButton = GuiUtils.createButton("<- Back", new Color(192, 192, 192), e -> {
+            gui.changePanel(PanelType.AUTHENTICATION);
+        });
+        add(backButton);
+
 
         // Preview da foto
         JPanel photoPanel = new JPanel();

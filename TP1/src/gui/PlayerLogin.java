@@ -1,5 +1,6 @@
 package gui;
 
+import gui.enums.PanelType;
 import gui.utils.GuiUtils;
 
 import javax.swing.*;
@@ -17,6 +18,11 @@ public class PlayerLogin extends JPanel {
     public PlayerLogin(MainWindow gui) {
         setLayout(new GridBagLayout());
         setBackground(new Color(255, 250, 240)); // Pastel background
+
+        JButton backButton = GuiUtils.createButton("<- Back", new Color(192, 192, 192), e -> {
+            gui.changePanel(PanelType.AUTHENTICATION);
+        });
+        add(backButton);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -63,7 +69,7 @@ public class PlayerLogin extends JPanel {
         spacerBottom.setOpaque(false);
         add(spacerBottom, gbc);
 
-        // Botão de login
+        // Botão de ‘login’
         gbc.gridy++;
         gbc.weighty = 0;
         gbc.insets = new Insets(20, 5, 5, 5);

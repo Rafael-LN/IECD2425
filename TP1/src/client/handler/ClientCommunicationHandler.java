@@ -38,7 +38,8 @@ public class ClientCommunicationHandler {
     public void sendLogin(String username, String password) {
         try {
             String xml = XmlMessageBuilder.buildLoginRequest(username, password);
-            out.writeObject(xml);
+            out.writeObject(xml);System.out.println("🔼 Enviado:\n" + xml);
+            System.out.println("🔼 Enviado:\n \t" + xml);
             receiveResponse();
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,6 +59,7 @@ public class ClientCommunicationHandler {
     private void receiveResponse() {
         try {
             String xml = (String) in.readObject();
+            System.out.println("🔽 Recebido:\n \t" + xml);
             Document doc = XmlMessageReader.parseXml(xml);
             messageHandler.handle(doc);
         } catch (Exception e) {
