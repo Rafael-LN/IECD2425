@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDatabase implements Serializable {
 
-    private static final String FILE_PATH = "../data/users.ser";
+    private static final String FILE_PATH = "TP1/data/users.ser";
 
     private ConcurrentHashMap<String, PlayerRecord> users;
 
@@ -30,7 +30,7 @@ public class UserDatabase implements Serializable {
 
     private void saveToFile() {
         try {
-            File dir = new File("data");
+            File dir = new File(FILE_PATH);
             if (!dir.exists()) {
                 dir.mkdirs();
             }

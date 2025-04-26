@@ -61,6 +61,11 @@ public class MainWindow extends JFrame implements GameClientListener {
         }
     }
 
+    public void addPanel(JPanel panel, PanelType pt) {
+        cardPanel.add(panel, pt.name());
+    }
+
+
     public void showError(String title, String message) {
         SwingUtilities.invokeLater(() ->
                 JOptionPane.showMessageDialog(this, message, title, ERROR_MESSAGE)

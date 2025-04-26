@@ -9,10 +9,12 @@ import java.util.Map;
 
 public class Lobby extends JPanel {
 
+    private final MainWindow gui;
     private final String username;
     private JButton searchButton;
 
     public Lobby(MainWindow gui, String username) {
+        this.gui = gui;
         this.username = username;
 
         setLayout(new GridBagLayout());
@@ -42,12 +44,21 @@ public class Lobby extends JPanel {
             );
             gui.sendRequest("findMatch", dados);
 
-            // Atualiza o botão após clicar
+            // Atualizar visualmente o botão
             searchButton.setText("Searching for opponent...");
             searchButton.setEnabled(false);
             searchButton.setForeground(Color.WHITE);
         });
         add(searchButton, gbc);
+
+        // Botão "Edit Profile"
+        gbc.gridy++;
+        JButton editProfileButton = GuiUtils.createButton("Edit Profile", new Color(173, 216, 230), e -> {
+            EditProfilePanel editProfilePanel = new EditProfilePanel(gui, username);
+            gui.addPanel(editProfilePanel, PanelType.EDIT_PROFILE);
+            gui.changePanel(PanelType.EDIT_PROFILE);
+        });
+        add(editProfileButton, gbc);
 
         // Botão "Logout"
         gbc.gridy++;
