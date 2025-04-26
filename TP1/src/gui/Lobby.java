@@ -9,7 +9,11 @@ import java.util.Map;
 
 public class Lobby extends JPanel {
 
+    private final String username;
+
     public Lobby(MainWindow gui, String username) {
+        this.username = username;
+
         setLayout(new GridBagLayout());
         setBackground(new Color(255, 250, 240));
 
@@ -28,13 +32,18 @@ public class Lobby extends JPanel {
         JLabel userLabel = GuiUtils.createLabel("Player: " + username, SwingConstants.CENTER);
         add(userLabel, gbc);
 
+        // Botão "Find Match"
         gbc.gridy++;
         JButton searchButton = GuiUtils.createButton("Find Match", new Color(100, 149, 237), e -> {
-            Map<String, String> dados = Map.of("username", username);
-            gui.sendRequest("findMatch", dados);
+            System.out.println("🎯 Pedido de procura de partida enviado para o servidor...");
+            Map<String, String> dados = Map.of(
+                    "username", username
+            );
+            gui.sendRequest("findMatch", dados); // envia pedido para o servidor
         });
         add(searchButton, gbc);
 
+        // Botão "Logout"
         gbc.gridy++;
         JButton logoutButton = GuiUtils.createButton("Logout", new Color(240, 128, 128), e -> {
             gui.sendRequest("logout", Map.of("username", username));
