@@ -41,18 +41,27 @@ public class ClientConnection extends Thread {
 
             while (true) {
                 String xml = (String) in.readObject();
-                System.out.println("🔽 Recebido de " + (username != null ? username : "??") + ":\n" + xml);
 
                 Document doc = common.XmlMessageReader.parseXml(xml);
                 ClientMessageProcessor.process(doc, this);
+
+                System.out.println("🔽 Recebido de " + (username != null ? username : "??") + ":\n" + xml);
+
             }
 
         } catch (Exception e) {
             System.err.println("Ligação terminada: " + e.getMessage());
         } finally {
-            try {
-                socket.close();
-            } catch (IOException ignored) {}
+           closeConnection();
         }
     }
+
+    private void closeConnection() {
+        try {
+            if (!socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException ignored) {}
+    }
+
 }
