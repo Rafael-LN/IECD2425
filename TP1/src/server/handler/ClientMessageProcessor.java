@@ -1,19 +1,17 @@
-package server.handlers;
+package server.handler;
 
-import common.XmlMessageBuilder;
 import common.XmlMessageReader;
 import org.w3c.dom.Document;
+import server.ClientConnection;
 import server.database.UserDatabase;
-
-import java.io.ObjectOutputStream;
 
 public class ClientMessageProcessor {
 
     private static final UserDatabase userDb = new UserDatabase();
 
-    public static void process(Document doc, ObjectOutputStream out) {
+    public static void process(Document doc, ClientConnection client) {
         try {
-            String type = XmlMessageReader.getRootElement(doc);
+            String type = doc.getDocumentElement().getLocalName();
 
             switch (type) {
                 case "loginRequest" -> {
@@ -21,11 +19,14 @@ public class ClientMessageProcessor {
                     String password = XmlMessageReader.getTextValue(doc, "password");
 
                     boolean success = userDb.login(username, password);
-                    String response = XmlMessageBuilder.buildResponse(
+                    if (success) client.setUsername(username);
+
+                    String response = common.XmlMessageBuilder.buildResponse(
                             success ? "success" : "error",
-                            success ? "Login efetuado com sucesso." : "Credenciais inválidas."
+                            success ? "Login efetuado com sucesso." : "Credenciais inválidas.",
+                            "login"
                     );
-                    out.writeObject(response);
+                    client.send(response);
                 }
 
                 case "registerRequest" -> {
@@ -33,20 +34,20 @@ public class ClientMessageProcessor {
                     String password = XmlMessageReader.getTextValue(doc, "password");
 
                     boolean success = userDb.register(username, password);
-                    String response = XmlMessageBuilder.buildResponse(
+                    if (success) client.setUsername(username);
+
+                    String response = common.XmlMessageBuilder.buildResponse(
                             success ? "success" : "error",
-                            success ? "Registo efetuado com sucesso." : "Utilizador já existe."
+                            success ? "Registo efetuado com sucesso." : "Utilizador já existe.",
+                            "register"
                     );
-                    out.writeObject(response);
+                    client.send(response);
                 }
 
-                case "move" -> {
-                    String player = XmlMessageReader.getTextValue(doc, "player");
-                    int x = XmlMessageReader.getIntValue(doc, "x");
-                    int y = XmlMessageReader.getIntValue(doc, "y");
-
-                    System.out.println("[JOGADA] " + player + ": (" + x + "," + y + ")");
-                    // aqui não se envia resposta — depende do protocolo que definires
+                case "findMatch" -> {
+                    String username = XmlMessageReader.getTextValue(doc, "username");
+                    client.setUsername(username);
+                    MatchmakingQueue.addToQueue(client);
                 }
             }
 
