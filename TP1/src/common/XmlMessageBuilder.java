@@ -27,6 +27,13 @@ public class XmlMessageBuilder {
                 "</response>";
     }
 
+    public static String buildFindMatchRequest(String username) {
+        return "<findMatch>" +
+                "<username>" + username + "</username>" +
+                "</findMatch>";
+    }
+
+
     public static String buildGameStart(String you, String opponent, boolean firstToPlay) {
         return "<gameStart>" +
                 "<player>" + you + "</player>" +
