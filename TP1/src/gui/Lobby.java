@@ -10,6 +10,7 @@ import java.util.Map;
 public class Lobby extends JPanel {
 
     private final String username;
+    private JButton searchButton;
 
     public Lobby(MainWindow gui, String username) {
         this.username = username;
@@ -34,12 +35,16 @@ public class Lobby extends JPanel {
 
         // Botão "Find Match"
         gbc.gridy++;
-        JButton searchButton = GuiUtils.createButton("Find Match", new Color(100, 149, 237), e -> {
+        searchButton = GuiUtils.createButton("Find Match", new Color(100, 149, 237), e -> {
             System.out.println("🎯 Pedido de procura de partida enviado para o servidor...");
             Map<String, String> dados = Map.of(
                     "username", username
             );
-            gui.sendRequest("findMatch", dados); // envia pedido para o servidor
+            gui.sendRequest("findMatch", dados);
+
+            // Atualiza o botão após clicar
+            searchButton.setText("Searching for opponent...");
+            searchButton.setEnabled(false);
         });
         add(searchButton, gbc);
 
