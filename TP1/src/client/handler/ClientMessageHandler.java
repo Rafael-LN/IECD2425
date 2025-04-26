@@ -41,8 +41,9 @@ public class ClientMessageHandler {
                             gui.onRegisterSuccess(session.getUsername());
                         }
                         case "findMatch" -> {
-                            // Em breve: iniciar jogo ou mostrar estado
+                            System.out.println("🔎 Pedido de matchmaking enviado. Aguardando emparelhamento...");
                         }
+
                     }
 
                 } else {
