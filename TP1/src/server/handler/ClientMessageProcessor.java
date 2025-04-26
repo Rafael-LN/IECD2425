@@ -12,6 +12,7 @@ public class ClientMessageProcessor {
     public static void process(Document doc, ClientConnection client) {
         try {
             String type = doc.getDocumentElement().getLocalName();
+            System.out.println("📩 A processar pedido: " + type + " de " + (client.getUsername() != null ? client.getUsername() : "cliente desconhecido"));
 
             switch (type) {
                 case "loginRequest" -> {
@@ -27,6 +28,10 @@ public class ClientMessageProcessor {
                             "login"
                     );
                     client.send(response);
+
+                    System.out.println(success ?
+                            "✅ Login bem-sucedido: " + username :
+                            "❌ Falha no login: " + username);
                 }
 
                 case "registerRequest" -> {
@@ -42,16 +47,27 @@ public class ClientMessageProcessor {
                             "register"
                     );
                     client.send(response);
+
+                    System.out.println(success ?
+                            "✅ Registo bem-sucedido: " + username :
+                            "❌ Falha no registo: " + username);
                 }
 
                 case "findMatch" -> {
                     String username = XmlMessageReader.getTextValue(doc, "username");
                     client.setUsername(username);
+
+                    System.out.println("🔎 Jogador a procurar partida: " + username);
                     MatchmakingQueue.addToQueue(client);
+                }
+
+                default -> {
+                    System.out.println("⚠️ Pedido desconhecido: " + type);
                 }
             }
 
         } catch (Exception e) {
+            System.err.println("❌ Erro ao processar mensagem: " + e.getMessage());
             e.printStackTrace();
         }
     }
