@@ -45,6 +45,7 @@ public class Lobby extends JPanel {
             // Atualiza o botão após clicar
             searchButton.setText("Searching for opponent...");
             searchButton.setEnabled(false);
+            searchButton.setForeground(Color.WHITE);
         });
         add(searchButton, gbc);
 
