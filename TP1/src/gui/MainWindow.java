@@ -54,6 +54,10 @@ public class MainWindow extends JFrame implements GameClientListener {
                     campos.get("nationality"),
                     campos.get("photo")
             );
+
+            case "findMatch" -> client.findMatch(
+                    campos.get("username")
+            );
         }
     }
 

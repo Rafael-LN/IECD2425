@@ -32,6 +32,11 @@ public class GoBangClient {
         communication.sendRegister(username, password, age, nationality, photo);
     }
 
+    public void findMatch(String username) {
+        communication.sendFindMatch(username);
+    }
+
+
     public MainWindow getGui() {
         return gui;
     }
