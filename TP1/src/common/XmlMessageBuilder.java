@@ -19,26 +19,19 @@ public class XmlMessageBuilder {
                 "</registerRequest>";
     }
 
-    public static String buildMove(String player, int x, int y) {
-        return "<move xmlns=\"http://tp1/game\">" +
-                "<player>" + player + "</player>" +
-                "<x>" + x + "</x>" +
-                "<y>" + y + "</y>" +
-                "</move>";
-    }
-
-    public static String buildGameStart(String opponent, boolean firstPlayer) {
-        return "<gameStart xmlns=\"http://tp1/game\">" +
-                "<opponent>" + opponent + "</opponent>" +
-                "<firstPlayer>" + firstPlayer + "</firstPlayer>" +
-                "</gameStart>";
-    }
-
-    public static String buildResponse(String status, String message) {
+    public static String buildResponse(String status, String message, String operation) {
         return "<response>" +
                 "<status>" + status + "</status>" +
                 "<message>" + message + "</message>" +
+                "<operation>" + operation + "</operation>" +
                 "</response>";
     }
 
+    public static String buildGameStart(String you, String opponent, boolean firstToPlay) {
+        return "<gameStart>" +
+                "<player>" + you + "</player>" +
+                "<opponent>" + opponent + "</opponent>" +
+                "<firstToPlay>" + firstToPlay + "</firstToPlay>" +
+                "</gameStart>";
+    }
 }
