@@ -56,6 +56,18 @@ public class ClientCommunicationHandler {
         }
     }
 
+    public void sendFindMatch(String username) {
+        try {
+            String xml = XmlMessageBuilder.buildFindMatchRequest(username);
+            System.out.println("🔼 Enviar findMatch para o servidor:\n \t" + xml);
+            out.writeObject(xml);
+            receiveResponse();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void receiveResponse() {
         try {
             String xml = (String) in.readObject();
