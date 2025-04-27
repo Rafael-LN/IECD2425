@@ -32,6 +32,11 @@ public class GoBangClient {
         communication.sendRegister(username, password, age, nationality, photo);
     }
 
+    public void updateProfile(String username, String photoBase64) {
+        communication.sendUpdateProfile(username, photoBase64);
+    }
+
+
     public void findMatch(String username) {
         communication.sendFindMatch(username);
     }
