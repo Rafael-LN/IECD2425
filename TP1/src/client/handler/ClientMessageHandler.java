@@ -2,6 +2,7 @@ package client.handler;
 
 import client.ClientSession;
 import common.GameClientListener;
+import common.UserProfileData;
 import common.XmlMessageReader;
 import org.w3c.dom.Document;
 
@@ -34,15 +35,24 @@ public class ClientMessageHandler {
                     switch (operation) {
                         case "login" -> {
                             populateUserProfile(doc);
-                            String usernameFromServer = XmlMessageReader.getTextValue(doc, "username");
-                            session.login(usernameFromServer);
-                            gui.onLoginSuccess(usernameFromServer);
+                            session.login(session.getProfile());
+                            gui.onLoginSuccess(session.getProfile().username());
                         }
 
                         case "register" -> {
-                            session.login(session.getUsername());
-                            gui.onRegisterSuccess(session.getUsername());
+                            populateUserProfile(doc);
+                            session.login(session.getProfile());
+                            gui.onRegisterSuccess(session.getProfile().username());
                         }
+
+                        case "updateProfile" -> {
+                            System.out.println("✅ Foto de perfil atualizada com sucesso.");
+                            String updatedPhoto = XmlMessageReader.getTextValue(doc, "photo");
+                            if (updatedPhoto != null && !updatedPhoto.isEmpty()) {
+                                session.updatePhoto(updatedPhoto);
+                            }
+                        }
+
                         case "findMatch" -> {
                             System.out.println("🔎 Pedido de matchmaking enviado. Aguardando emparelhamento...");
                         }
@@ -69,7 +79,7 @@ public class ClientMessageHandler {
     }
 
     private void populateUserProfile(Document doc) {
-        String usernameFromServer = XmlMessageReader.getTextValue(doc, "username");
+        String username = XmlMessageReader.getTextValue(doc, "username");
         String photoBase64 = XmlMessageReader.getTextValue(doc, "photo");
         int age = Integer.parseInt(XmlMessageReader.getTextValue(doc, "age"));
         String nationality = XmlMessageReader.getTextValue(doc, "nationality");
@@ -77,12 +87,7 @@ public class ClientMessageHandler {
         int losses = Integer.parseInt(XmlMessageReader.getTextValue(doc, "losses"));
         long timePlayed = Long.parseLong(XmlMessageReader.getTextValue(doc, "timePlayed"));
 
-        session.setPhotoBase64(photoBase64);
-        session.setAge(age);
-        session.setNationality(nationality);
-        session.setWins(wins);
-        session.setLosses(losses);
-        session.setTimePlayed(timePlayed);
+        session.login(new UserProfileData(username, age, nationality, wins, losses, timePlayed, photoBase64));
     }
 
     private String determineOperationType(String message) {

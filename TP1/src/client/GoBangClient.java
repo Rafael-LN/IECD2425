@@ -2,6 +2,7 @@ package client;
 
 import client.handler.ClientCommunicationHandler;
 import client.handler.ClientMessageHandler;
+import common.UserProfileData;
 import gui.MainWindow;
 
 public class GoBangClient {
@@ -23,18 +24,14 @@ public class GoBangClient {
     }
 
     public void login(String username, String password) {
-        session.login(username);
         communication.sendLogin(username, password);
     }
 
-    public void register(String username, String password, int age, String nationality, String photo) {
-        session.login(username);
-        session.setPhotoBase64(photo);
-        communication.sendRegister(username, password, age, nationality, photo);
+    public void register(String username, String password, int age, String nationality, String photoBase64) {
+        communication.sendRegister(username, password, age, nationality, photoBase64);
     }
 
     public void updateProfile(String username, String photoBase64) {
-        session.setPhotoBase64(photoBase64);
         communication.sendUpdateProfile(username, photoBase64);
     }
 
@@ -42,12 +39,16 @@ public class GoBangClient {
         communication.sendFindMatch(username);
     }
 
-    public String getLoggedUserPhoto() {
-        return session.getPhotoBase64();
+    public UserProfileData getProfile() {
+        return session.getProfile();
     }
 
     public MainWindow getGui() {
         return gui;
+    }
+
+    public ClientSession getSession() {
+        return session;
     }
 
     public static void main(String[] args) {
@@ -57,5 +58,4 @@ public class GoBangClient {
         GoBangClient client = new GoBangClient(ip, port);
         client.start();
     }
-
 }

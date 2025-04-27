@@ -2,6 +2,7 @@ package gui;
 
 import client.GoBangClient;
 import common.GameClientListener;
+import common.UserProfileData;
 import gui.enums.PanelType;
 
 import javax.swing.*;
@@ -84,9 +85,39 @@ public class MainWindow extends JFrame implements GameClientListener {
         );
     }
 
-    public String getLoggedUserPhoto() {
-        return client.getLoggedUserPhoto();
+    public String getLoggedUsername() {
+        return client.getProfile().username();
     }
+
+    public String getLoggedUserPhoto() {
+        return client.getProfile().photoBase64();
+    }
+
+    public int getLoggedUserAge() {
+        return client.getProfile().age();
+    }
+
+    public String getLoggedUserNationality() {
+        return client.getProfile().nationality();
+    }
+
+    public int getLoggedUserWins() {
+        return client.getProfile().wins();
+    }
+
+    public int getLoggedUserLosses() {
+        return client.getProfile().losses();
+    }
+
+    public long getLoggedUserTimePlayed() {
+        return client.getProfile().timePlayed();
+    }
+
+    public UserProfileData getLoggedUserProfile() {
+        return client.getProfile();
+    }
+
+
 
 
     @Override

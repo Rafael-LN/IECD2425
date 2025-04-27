@@ -1,5 +1,6 @@
 package gui;
 
+import common.UserProfileData;
 import gui.enums.PanelType;
 import gui.utils.GuiUtils;
 
@@ -50,8 +51,8 @@ public class Lobby extends JPanel {
         // Botão "Edit Profile"
         gbc.gridy++;
         JButton editProfileButton = GuiUtils.createButton("Edit Profile", new Color(173, 216, 230), _ -> {
-            String photoBase64 = gui.getLoggedUserPhoto();
-            ViewProfilePanel viewProfilePanel = new ViewProfilePanel(gui, username, photoBase64);
+            UserProfileData profile = gui.getLoggedUserProfile();
+            ViewProfilePanel viewProfilePanel = new ViewProfilePanel(gui, profile);
             gui.addPanel(viewProfilePanel, PanelType.EDIT_PROFILE);
             gui.changePanel(PanelType.EDIT_PROFILE);
 
