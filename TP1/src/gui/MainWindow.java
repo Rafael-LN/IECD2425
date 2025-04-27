@@ -58,6 +58,12 @@ public class MainWindow extends JFrame implements GameClientListener {
             case "findMatch" -> client.findMatch(
                     campos.get("username")
             );
+
+            case "updateProfile" -> client.updateProfile(
+                    campos.get("username"),
+                    campos.get("photo")
+            );
+
         }
     }
 
@@ -101,7 +107,6 @@ public class MainWindow extends JFrame implements GameClientListener {
         cardPanel.add(lobby, PanelType.LOBBY.name());
         changePanel(PanelType.LOBBY);
     }
-
 
     @Override
     public void onRegisterError(String msg) {
