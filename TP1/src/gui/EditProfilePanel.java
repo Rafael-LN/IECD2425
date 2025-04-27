@@ -22,7 +22,7 @@ public class EditProfilePanel extends JPanel {
     private JButton choosePhotoButton, removePhotoButton, saveButton, backButton;
     private byte[] newPhotoData;
 
-    public EditProfilePanel(MainWindow gui, String username) {
+    public EditProfilePanel(MainWindow gui, String username, String base64Photo) {
         this.gui = gui;
         this.username = username;
 
@@ -45,6 +45,14 @@ public class EditProfilePanel extends JPanel {
         photoPreviewLabel.setPreferredSize(new Dimension(150, 150));
         photoPreviewLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         add(photoPreviewLabel, gbc);
+
+        if (base64Photo != null && !base64Photo.isEmpty()) {
+            byte[] photoBytes = Base64.getDecoder().decode(base64Photo);
+            ImageIcon icon = new ImageIcon(photoBytes);
+            Image image = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            photoPreviewLabel.setIcon(new ImageIcon(image));
+        }
+
 
         // Botão para escolher nova foto
         gbc.gridy++;
