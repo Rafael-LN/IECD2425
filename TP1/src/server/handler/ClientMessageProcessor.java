@@ -20,14 +20,25 @@ public class ClientMessageProcessor {
                     String password = XmlMessageReader.getTextValue(doc, "password");
 
                     boolean success = userDb.login(username, password);
-                    if (success) client.setUsername(username);
+                    if (success) {
+                        String photoBase64 = userDb.getPhoto(username);
 
-                    String response = common.XmlMessageBuilder.buildResponse(
-                            success ? "success" : "error",
-                            success ? "Login efetuado com sucesso." : "Credenciais inválidas.",
-                            "login"
-                    );
-                    client.send(response);
+                        String response = common.XmlMessageBuilder.buildLoginResponse(
+                                "success",
+                                "Login efetuado com sucesso.",
+                                username,
+                                photoBase64
+                        );
+                        client.send(response);
+                    } else {
+                        String response = common.XmlMessageBuilder.buildResponse(
+                                "error",
+                                "Credenciais inválidas.",
+                                "login"
+                        );
+                        client.send(response);
+                    }
+
 
                     System.out.println(success ?
                             "✅ Login bem-sucedido: " + username :
