@@ -19,6 +19,14 @@ public class XmlMessageBuilder {
                 "</registerRequest>";
     }
 
+    public static String buildUpdateProfileRequest(String username, String photoBase64) {
+        return "<updateProfileRequest>" +
+                "<username>" + username + "</username>" +
+                "<photo>" + photoBase64 + "</photo>" +
+                "</updateProfileRequest>";
+    }
+
+
     public static String buildResponse(String status, String message, String operation) {
         return "<response>" +
                 "<status>" + status + "</status>" +
