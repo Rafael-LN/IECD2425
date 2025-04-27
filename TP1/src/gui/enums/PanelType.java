@@ -4,8 +4,8 @@ public enum PanelType {
     AUTHENTICATION("GoBang Game", 400, 200),
     LOGIN("Login", 400, 250),
     REGISTRATION("Player Registration", 600, 300),
-    EDIT_PROFILE("Edit Profile", 800, 800),
-    LOBBY("Lobby", 600, 300),
+    VIEW_PROFILE("View Profile", 600, 500),
+    LOBBY("Lobby", 500, 300),
     GAME("Game", 800, 800);
 
     private final String title;
