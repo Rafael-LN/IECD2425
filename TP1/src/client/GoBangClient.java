@@ -41,6 +41,10 @@ public class GoBangClient {
         communication.sendFindMatch(username);
     }
 
+    public String getLoggedUserPhoto() {
+        return session.getPhotoBase64();
+    }
+
 
     public MainWindow getGui() {
         return gui;

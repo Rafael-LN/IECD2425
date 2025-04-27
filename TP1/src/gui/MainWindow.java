@@ -84,6 +84,11 @@ public class MainWindow extends JFrame implements GameClientListener {
         );
     }
 
+    public String getLoggedUserPhoto() {
+        return client.getLoggedUserPhoto();
+    }
+
+
     @Override
     public void onLoginSuccess(String username) {
         showInfo("Login completo", "Utilizador autenticado com sucesso.");

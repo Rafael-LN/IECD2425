@@ -9,13 +9,9 @@ import java.util.Map;
 
 public class Lobby extends JPanel {
 
-    private final MainWindow gui;
-    private final String username;
     private JButton searchButton;
 
     public Lobby(MainWindow gui, String username) {
-        this.gui = gui;
-        this.username = username;
 
         setLayout(new GridBagLayout());
         setBackground(new Color(255, 250, 240));
@@ -37,7 +33,7 @@ public class Lobby extends JPanel {
 
         // Botão "Find Match"
         gbc.gridy++;
-        searchButton = GuiUtils.createButton("Find Match", new Color(100, 149, 237), e -> {
+        searchButton = GuiUtils.createButton("Find Match", new Color(100, 149, 237), _ -> {
             System.out.println("🎯 Pedido de procura de partida enviado para o servidor...");
             Map<String, String> dados = Map.of(
                     "username", username
@@ -53,16 +49,18 @@ public class Lobby extends JPanel {
 
         // Botão "Edit Profile"
         gbc.gridy++;
-        JButton editProfileButton = GuiUtils.createButton("Edit Profile", new Color(173, 216, 230), e -> {
-            EditProfilePanel editProfilePanel = new EditProfilePanel(gui, username);
+        JButton editProfileButton = GuiUtils.createButton("Edit Profile", new Color(173, 216, 230), _ -> {
+            String photoBase64 = gui.getLoggedUserPhoto();
+            EditProfilePanel editProfilePanel = new EditProfilePanel(gui, username, photoBase64);
             gui.addPanel(editProfilePanel, PanelType.EDIT_PROFILE);
             gui.changePanel(PanelType.EDIT_PROFILE);
+
         });
         add(editProfileButton, gbc);
 
         // Botão "Logout"
         gbc.gridy++;
-        JButton logoutButton = GuiUtils.createButton("Logout", new Color(240, 128, 128), e -> {
+        JButton logoutButton = GuiUtils.createButton("Logout", new Color(240, 128, 128), _ -> {
             gui.sendRequest("logout", Map.of("username", username));
             gui.changePanel(PanelType.AUTHENTICATION);
         });
