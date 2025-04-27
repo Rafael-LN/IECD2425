@@ -78,27 +78,7 @@ public class UserDatabase implements Serializable {
         return true;
     }
 
-    public synchronized String getPhoto(String username) {
-        PlayerRecord player = users.get(username);
-        if (player != null) {
-            return player.photoBase64();
-        }
-        return "";
-    }
-
     public synchronized PlayerRecord getPlayer(String username) {
         return users.get(username);
     }
-
-    public record PlayerRecord(
-            String username,
-            String password,
-            int age,
-            String nationality,
-            String photoBase64,
-            int wins,
-            int losses,
-            long timePlayed
-    ) implements Serializable {}
-
 }
