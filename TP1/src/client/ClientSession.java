@@ -1,20 +1,41 @@
 package client;
 
-public class ClientSession {
-    private String username;
-    private boolean loggedIn;
+import common.UserProfileData;
 
-    public void login(String username) {
-        this.username = username;
+public class ClientSession {
+
+    private boolean loggedIn;
+    private UserProfileData profile;
+
+    public void login(UserProfileData profile) {
+        this.profile = profile;
         this.loggedIn = true;
     }
 
     public void logout() {
-        this.username = null;
+        this.profile = null;
         this.loggedIn = false;
     }
 
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
 
-    public String getUsername() { return username; }
-    public boolean isLoggedIn() { return loggedIn; }
+    public UserProfileData getProfile() {
+        return profile;
+    }
+
+    public void updatePhoto(String newPhotoBase64) {
+        if (profile != null) {
+            profile = new UserProfileData(
+                    profile.username(),
+                    profile.age(),
+                    profile.nationality(),
+                    profile.wins(),
+                    profile.losses(),
+                    profile.timePlayed(),
+                    newPhotoBase64
+            );
+        }
+    }
 }

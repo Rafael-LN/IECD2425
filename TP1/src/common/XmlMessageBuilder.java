@@ -19,11 +19,34 @@ public class XmlMessageBuilder {
                 "</registerRequest>";
     }
 
+    public static String buildUpdateProfileRequest(String username, String photoBase64) {
+        return "<updateProfileRequest>" +
+                "<username>" + username + "</username>" +
+                "<photo>" + photoBase64 + "</photo>" +
+                "</updateProfileRequest>";
+    }
+
+
     public static String buildResponse(String status, String message, String operation) {
         return "<response>" +
                 "<status>" + status + "</status>" +
                 "<message>" + message + "</message>" +
                 "<operation>" + operation + "</operation>" +
+                "</response>";
+    }
+
+    public static String buildLoginResponse(String status, String message, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed) {
+        return "<response>" +
+                "<status>" + status + "</status>" +
+                "<message>" + message + "</message>" +
+                "<operation>login</operation>" +
+                "<username>" + username + "</username>" +
+                "<photo>" + (photoBase64 != null ? photoBase64 : "") + "</photo>" +
+                "<age>" + age + "</age>" +
+                "<nationality>" + nationality + "</nationality>" +
+                "<wins>" + wins + "</wins>" +
+                "<losses>" + losses + "</losses>" +
+                "<timePlayed>" + timePlayed + "</timePlayed>" +
                 "</response>";
     }
 

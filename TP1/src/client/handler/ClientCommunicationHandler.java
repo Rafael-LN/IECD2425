@@ -56,6 +56,18 @@ public class ClientCommunicationHandler {
         }
     }
 
+    public void sendUpdateProfile(String username, String photoBase64) {
+        try {
+            String xml = XmlMessageBuilder.buildUpdateProfileRequest(username, photoBase64);
+            System.out.println("🔼 Enviar updateProfile para o servidor:\n" + xml);
+            out.writeObject(xml);
+            receiveResponse();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void sendFindMatch(String username) {
         try {
             String xml = XmlMessageBuilder.buildFindMatchRequest(username);

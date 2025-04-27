@@ -2,6 +2,7 @@ package gui;
 
 import client.GoBangClient;
 import common.GameClientListener;
+import common.UserProfileData;
 import gui.enums.PanelType;
 
 import javax.swing.*;
@@ -58,8 +59,19 @@ public class MainWindow extends JFrame implements GameClientListener {
             case "findMatch" -> client.findMatch(
                     campos.get("username")
             );
+
+            case "updateProfile" -> client.updateProfile(
+                    campos.get("username"),
+                    campos.get("photo")
+            );
+
         }
     }
+
+    public void addPanel(JPanel panel, PanelType pt) {
+        cardPanel.add(panel, pt.name());
+    }
+
 
     public void showError(String title, String message) {
         SwingUtilities.invokeLater(() ->
@@ -72,6 +84,41 @@ public class MainWindow extends JFrame implements GameClientListener {
                 JOptionPane.showMessageDialog(this, message, title, INFORMATION_MESSAGE)
         );
     }
+
+    public String getLoggedUsername() {
+        return client.getProfile().username();
+    }
+
+    public String getLoggedUserPhoto() {
+        return client.getProfile().photoBase64();
+    }
+
+    public int getLoggedUserAge() {
+        return client.getProfile().age();
+    }
+
+    public String getLoggedUserNationality() {
+        return client.getProfile().nationality();
+    }
+
+    public int getLoggedUserWins() {
+        return client.getProfile().wins();
+    }
+
+    public int getLoggedUserLosses() {
+        return client.getProfile().losses();
+    }
+
+    public long getLoggedUserTimePlayed() {
+        return client.getProfile().timePlayed();
+    }
+
+    public UserProfileData getLoggedUserProfile() {
+        return client.getProfile();
+    }
+
+
+
 
     @Override
     public void onLoginSuccess(String username) {
@@ -96,7 +143,6 @@ public class MainWindow extends JFrame implements GameClientListener {
         cardPanel.add(lobby, PanelType.LOBBY.name());
         changePanel(PanelType.LOBBY);
     }
-
 
     @Override
     public void onRegisterError(String msg) {
