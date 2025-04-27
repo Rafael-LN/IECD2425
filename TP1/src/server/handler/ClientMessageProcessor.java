@@ -37,8 +37,11 @@ public class ClientMessageProcessor {
                 case "registerRequest" -> {
                     String username = XmlMessageReader.getTextValue(doc, "username");
                     String password = XmlMessageReader.getTextValue(doc, "password");
+                    int age = Integer.parseInt(XmlMessageReader.getTextValue(doc, "age"));
+                    String nationality = XmlMessageReader.getTextValue(doc, "nationality");
+                    String photoBase64 = XmlMessageReader.getTextValue(doc, "photo");
 
-                    boolean success = userDb.register(username, password);
+                    boolean success = userDb.register(username, password, age, nationality, photoBase64);
                     if (success) client.setUsername(username);
 
                     String response = common.XmlMessageBuilder.buildResponse(
@@ -59,6 +62,24 @@ public class ClientMessageProcessor {
 
                     System.out.println("🔎 Jogador a procurar partida: " + username);
                     MatchmakingQueue.addToQueue(client);
+                }
+
+                case "updateProfileRequest" -> {
+                    String username = XmlMessageReader.getTextValue(doc, "username");
+                    String photoBase64 = XmlMessageReader.getTextValue(doc, "photo");
+
+                    boolean success = userDb.updatePhoto(username, photoBase64);
+
+                    String response = common.XmlMessageBuilder.buildResponse(
+                            success ? "success" : "error",
+                            success ? "Perfil atualizado com sucesso." : "Erro ao atualizar perfil.",
+                            "updateProfile"
+                    );
+                    client.send(response);
+
+                    System.out.println(success ?
+                            "✅ Foto atualizada para: " + username :
+                            "❌ Erro ao atualizar foto para: " + username);
                 }
 
                 default -> {
