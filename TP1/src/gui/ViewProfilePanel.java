@@ -19,68 +19,92 @@ public class ViewProfilePanel extends JPanel {
 
     private final MainWindow gui;
     private final UserProfileData profile;
-    private final JLabel photoPreviewLabel;
+    private JLabel photoPreviewLabel;
     private byte[] newPhotoData;
 
     public ViewProfilePanel(MainWindow gui, UserProfileData profile) {
         this.gui = gui;
         this.profile = profile;
 
-        setLayout(new GridBagLayout());
-        setBackground(new Color(255, 250, 240)); // pastel background
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(255, 250, 240));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
+        // Título
+        JLabel titleLabel = GuiUtils.createLabel("Your Profile", SwingConstants.CENTER, new Font("Roboto", Font.BOLD, 20), null);
+        add(titleLabel, BorderLayout.NORTH);
 
-        JLabel titleLabel = GuiUtils.createLabel("Your Profile", SwingConstants.CENTER,
-                new Font("Roboto", Font.BOLD, 16), null);
-        add(titleLabel, gbc);
+        // Corpo: informação + foto
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 20, 10));
+        centerPanel.setOpaque(false);
 
-        // Mostrar dados do utilizador
-        gbc.gridy++;
-        add(createUserInfoPanel(), gbc);
+        centerPanel.add(createUserInfoPanel());
+        centerPanel.add(createPhotoPanel());
 
-        // Preview da foto atual
-        gbc.gridy++;
-        photoPreviewLabel = new JLabel();
-        photoPreviewLabel.setPreferredSize(new Dimension(150, 150));
-        photoPreviewLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        add(photoPreviewLabel, gbc);
-
-        if (profile.photoBase64() != null && !profile.photoBase64().isEmpty()) {
-            byte[] photoBytes = Base64.getDecoder().decode(profile.photoBase64());
-            ImageIcon icon = new ImageIcon(photoBytes);
-            Image image = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            photoPreviewLabel.setIcon(new ImageIcon(image));
-        }
+        add(centerPanel, BorderLayout.CENTER);
 
         // Botões
-        gbc.gridy++;
-        add(createButtonsPanel(), gbc);
+        add(createButtonsPanel(), BorderLayout.SOUTH);
     }
 
     private JPanel createUserInfoPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 1));
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
 
-        panel.add(GuiUtils.createLabel("Nickname: " + profile.username(), SwingConstants.CENTER));
-        panel.add(GuiUtils.createLabel("Age: " + profile.age(), SwingConstants.CENTER));
-        panel.add(GuiUtils.createLabel("Nationality: " + profile.nationality(), SwingConstants.CENTER));
-        panel.add(GuiUtils.createLabel("Wins: " + profile.wins(), SwingConstants.CENTER));
-        panel.add(GuiUtils.createLabel("Losses: " + profile.losses(), SwingConstants.CENTER));
-        panel.add(GuiUtils.createLabel("Time Played: " + formatTimePlayed(profile.timePlayed()), SwingConstants.CENTER));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 20, 5, 20); // padding (top, left, bottom, right)
+        gbc.anchor = GridBagConstraints.WEST; // alinhar à esquerda
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
+        addInfoRow(panel, gbc, "Nickname:", profile.username());
+        addInfoRow(panel, gbc, "Age:", String.valueOf(profile.age()));
+        addInfoRow(panel, gbc, "Nationality:", profile.nationality());
+        addInfoRow(panel, gbc, "Wins:", String.valueOf(profile.wins()));
+        addInfoRow(panel, gbc, "Losses:", String.valueOf(profile.losses()));
+        addInfoRow(panel, gbc, "Time Played:", formatTimePlayed(profile.timePlayed()));
 
         return panel;
     }
 
+    private void addInfoRow(JPanel panel, GridBagConstraints gbc, String label, String value) {
+        JLabel labelComponent = new JLabel(label);
+        labelComponent.setFont(new Font("Roboto", Font.BOLD, 14));
+
+        JLabel valueComponent = new JLabel(value);
+        valueComponent.setFont(new Font("Roboto", Font.PLAIN, 14));
+
+        gbc.gridx = 0;
+        panel.add(labelComponent, gbc);
+
+        gbc.gridx = 1;
+        panel.add(valueComponent, gbc);
+
+        gbc.gridy++;
+    }
+
+
+    private JPanel createPhotoPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+
+        photoPreviewLabel = new JLabel();
+        photoPreviewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        photoPreviewLabel.setPreferredSize(new Dimension(200, 250));
+        photoPreviewLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        if (profile.photoBase64() != null && !profile.photoBase64().isEmpty()) {
+            byte[] photoBytes = Base64.getDecoder().decode(profile.photoBase64());
+            ImageIcon icon = new ImageIcon(photoBytes);
+            Image image = icon.getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH);
+            photoPreviewLabel.setIcon(new ImageIcon(image));
+        }
+
+        panel.add(photoPreviewLabel, BorderLayout.CENTER);
+        return panel;
+    }
+
     private JPanel createButtonsPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
         panel.setOpaque(false);
 
         JButton choosePhotoButton = GuiUtils.createButton("Choose New Photo", new Color(100, 149, 237), this::chooseNewPhoto);
@@ -109,7 +133,7 @@ public class ViewProfilePanel extends JPanel {
                 newPhotoData = Files.readAllBytes(photoPath);
 
                 ImageIcon icon = new ImageIcon(newPhotoData);
-                Image image = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                Image image = icon.getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH);
                 photoPreviewLabel.setIcon(new ImageIcon(image));
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Error loading image.", "Error", JOptionPane.ERROR_MESSAGE);
