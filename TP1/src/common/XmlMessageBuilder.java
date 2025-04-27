@@ -35,16 +35,20 @@ public class XmlMessageBuilder {
                 "</response>";
     }
 
-    public static String buildLoginResponse(String status, String message, String username, String photoBase64) {
+    public static String buildLoginResponse(String status, String message, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed) {
         return "<response>" +
                 "<status>" + status + "</status>" +
                 "<message>" + message + "</message>" +
                 "<operation>login</operation>" +
                 "<username>" + username + "</username>" +
                 "<photo>" + (photoBase64 != null ? photoBase64 : "") + "</photo>" +
+                "<age>" + age + "</age>" +
+                "<nationality>" + nationality + "</nationality>" +
+                "<wins>" + wins + "</wins>" +
+                "<losses>" + losses + "</losses>" +
+                "<timePlayed>" + timePlayed + "</timePlayed>" +
                 "</response>";
     }
-
 
     public static String buildFindMatchRequest(String username) {
         return "<findMatch>" +

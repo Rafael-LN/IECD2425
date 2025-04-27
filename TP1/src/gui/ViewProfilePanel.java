@@ -14,7 +14,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditProfilePanel extends JPanel {
+public class ViewProfilePanel extends JPanel {
 
     private final MainWindow gui;
     private final String username;
@@ -22,7 +22,7 @@ public class EditProfilePanel extends JPanel {
     private JButton choosePhotoButton, removePhotoButton, saveButton, backButton;
     private byte[] newPhotoData;
 
-    public EditProfilePanel(MainWindow gui, String username, String base64Photo) {
+    public ViewProfilePanel(MainWindow gui, String username, String base64Photo) {
         this.gui = gui;
         this.username = username;
 

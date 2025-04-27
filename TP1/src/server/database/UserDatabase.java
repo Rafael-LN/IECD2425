@@ -86,6 +86,9 @@ public class UserDatabase implements Serializable {
         return "";
     }
 
+    public synchronized PlayerRecord getPlayer(String username) {
+        return users.get(username);
+    }
 
     public record PlayerRecord(
             String username,

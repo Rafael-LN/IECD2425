@@ -23,19 +23,20 @@ public class GoBangClient {
     }
 
     public void login(String username, String password) {
-        session.login(username); // guarda temporariamente para que o handler saiba quem é
+        session.login(username);
         communication.sendLogin(username, password);
     }
 
     public void register(String username, String password, int age, String nationality, String photo) {
-        session.login(username); // também queremos saber quem se está a registar
+        session.login(username);
+        session.setPhotoBase64(photo);
         communication.sendRegister(username, password, age, nationality, photo);
     }
 
     public void updateProfile(String username, String photoBase64) {
+        session.setPhotoBase64(photoBase64);
         communication.sendUpdateProfile(username, photoBase64);
     }
-
 
     public void findMatch(String username) {
         communication.sendFindMatch(username);
@@ -44,7 +45,6 @@ public class GoBangClient {
     public String getLoggedUserPhoto() {
         return session.getPhotoBase64();
     }
-
 
     public MainWindow getGui() {
         return gui;

@@ -16,7 +16,7 @@ public class ClientMessageHandler {
     }
 
     public void handle(Document doc) {
-        String type = doc.getDocumentElement().getLocalName();
+        String type = XmlMessageReader.getRootElement(doc);
 
         switch (type) {
             case "response" -> {
@@ -33,19 +33,20 @@ public class ClientMessageHandler {
 
                     switch (operation) {
                         case "login" -> {
-                            gui.onLoginSuccess(session.getUsername());
+                            populateUserProfile(doc);
+                            String usernameFromServer = XmlMessageReader.getTextValue(doc, "username");
+                            session.login(usernameFromServer);
+                            gui.onLoginSuccess(usernameFromServer);
                         }
+
                         case "register" -> {
-                            // Auto-login após registo
                             session.login(session.getUsername());
                             gui.onRegisterSuccess(session.getUsername());
                         }
                         case "findMatch" -> {
                             System.out.println("🔎 Pedido de matchmaking enviado. Aguardando emparelhamento...");
                         }
-
                     }
-
                 } else {
                     // Handle failures
                     switch (operation) {
@@ -57,14 +58,31 @@ public class ClientMessageHandler {
             }
 
             case "gameStart" -> {
-                String you = XmlMessageReader.getTextValue(doc, "player");
+                String player = XmlMessageReader.getTextValue(doc, "player");
                 String opponent = XmlMessageReader.getTextValue(doc, "opponent");
-                boolean youStart = Boolean.parseBoolean(XmlMessageReader.getTextValue(doc, "firstToPlay"));
+                boolean isPlayerFirst = Boolean.parseBoolean(XmlMessageReader.getTextValue(doc, "firstToPlay"));
 
-                System.out.println("🎮 Match iniciado com: " + opponent + " | Primeiro a jogar: " + (youStart ? you : opponent));
-                gui.onGameStart(you, opponent, youStart);
+                System.out.println("🎮 Match iniciado com: " + opponent + " | Primeiro a jogar: " + (isPlayerFirst ? player : opponent));
+                gui.onGameStart(player, opponent, isPlayerFirst);
             }
         }
+    }
+
+    private void populateUserProfile(Document doc) {
+        String usernameFromServer = XmlMessageReader.getTextValue(doc, "username");
+        String photoBase64 = XmlMessageReader.getTextValue(doc, "photo");
+        int age = Integer.parseInt(XmlMessageReader.getTextValue(doc, "age"));
+        String nationality = XmlMessageReader.getTextValue(doc, "nationality");
+        int wins = Integer.parseInt(XmlMessageReader.getTextValue(doc, "wins"));
+        int losses = Integer.parseInt(XmlMessageReader.getTextValue(doc, "losses"));
+        long timePlayed = Long.parseLong(XmlMessageReader.getTextValue(doc, "timePlayed"));
+
+        session.setPhotoBase64(photoBase64);
+        session.setAge(age);
+        session.setNationality(nationality);
+        session.setWins(wins);
+        session.setLosses(losses);
+        session.setTimePlayed(timePlayed);
     }
 
     private String determineOperationType(String message) {
@@ -75,6 +93,8 @@ public class ClientMessageHandler {
             return "register";
         } else if (lowerMessage.contains("partida") || lowerMessage.contains("jogo")) {
             return "findMatch";
+        } else if (lowerMessage.contains("perfil") || lowerMessage.contains("foto")) {
+            return "updateProfile";
         }
         return "unknown";
     }

@@ -51,8 +51,8 @@ public class Lobby extends JPanel {
         gbc.gridy++;
         JButton editProfileButton = GuiUtils.createButton("Edit Profile", new Color(173, 216, 230), _ -> {
             String photoBase64 = gui.getLoggedUserPhoto();
-            EditProfilePanel editProfilePanel = new EditProfilePanel(gui, username, photoBase64);
-            gui.addPanel(editProfilePanel, PanelType.EDIT_PROFILE);
+            ViewProfilePanel viewProfilePanel = new ViewProfilePanel(gui, username, photoBase64);
+            gui.addPanel(viewProfilePanel, PanelType.EDIT_PROFILE);
             gui.changePanel(PanelType.EDIT_PROFILE);
 
         });

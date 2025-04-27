@@ -20,14 +20,21 @@ public class ClientMessageProcessor {
                     String password = XmlMessageReader.getTextValue(doc, "password");
 
                     boolean success = userDb.login(username, password);
+                    if (success) client.setUsername(username);
+
                     if (success) {
-                        String photoBase64 = userDb.getPhoto(username);
+                        var player = userDb.getPlayer(username);
 
                         String response = common.XmlMessageBuilder.buildLoginResponse(
                                 "success",
                                 "Login efetuado com sucesso.",
                                 username,
-                                photoBase64
+                                player.photoBase64(),
+                                player.age(),
+                                player.nationality(),
+                                player.wins(),
+                                player.losses(),
+                                player.timePlayed()
                         );
                         client.send(response);
                     } else {
@@ -38,11 +45,6 @@ public class ClientMessageProcessor {
                         );
                         client.send(response);
                     }
-
-
-                    System.out.println(success ?
-                            "✅ Login bem-sucedido: " + username :
-                            "❌ Falha no login: " + username);
                 }
 
                 case "registerRequest" -> {
