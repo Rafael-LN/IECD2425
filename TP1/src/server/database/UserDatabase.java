@@ -16,9 +16,9 @@ public class UserDatabase implements Serializable {
         }
     }
 
-    public synchronized boolean register(String username, String password) {
+    public synchronized boolean register(String username, String password, int age, String nationality, String photoBase64) {
         if (users.containsKey(username)) return false;
-        users.put(username, new PlayerRecord(username, password));
+        users.put(username, new PlayerRecord(username, password, age, nationality, photoBase64, 0, 0, 0));
         saveToFile();
         return true;
     }
@@ -60,5 +60,33 @@ public class UserDatabase implements Serializable {
         }
     }
 
-    public record PlayerRecord(String username, String password) implements Serializable {}
+    public synchronized boolean updatePhoto(String username, String photoBase64) {
+        PlayerRecord player = users.get(username);
+        if (player == null) return false;
+
+        users.put(username, new PlayerRecord(
+                player.username(),
+                player.password(),
+                player.age(),
+                player.nationality(),
+                photoBase64,
+                player.wins(),
+                player.losses(),
+                player.timePlayed()
+        ));
+        saveToFile();
+        return true;
+    }
+
+    public record PlayerRecord(
+            String username,
+            String password,
+            int age,
+            String nationality,
+            String photoBase64,
+            int wins,
+            int losses,
+            long timePlayed
+    ) implements Serializable {}
+
 }
