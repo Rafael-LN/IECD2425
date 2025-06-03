@@ -35,17 +35,19 @@ public class Lobby extends JPanel {
         // Botão "Find Match"
         gbc.gridy++;
         searchButton = GuiUtils.createButton("Find Match", new Color(100, 149, 237), _ -> {
-            System.out.println("🎯 Pedido de procura de partida enviado para o servidor...");
-            Map<String, String> dados = Map.of(
-                    "username", username
-            );
-            gui.sendRequest("findMatch", dados);
-
-            // Atualizar visualmente o botão
+            // Atualizar UI imediatamente
             searchButton.setText("Searching for opponent...");
             searchButton.setEnabled(false);
             searchButton.setForeground(Color.WHITE);
+
+            // Enviar pedido numa nova thread
+            new Thread(() -> {
+                System.out.println("🎯 Pedido de procura de partida enviado para o servidor...");
+                Map<String, String> dados = Map.of("username", username);
+                gui.sendRequest("findMatch", dados);
+            }).start();
         });
+
         add(searchButton, gbc);
 
         // Botão "Edit Profile"
