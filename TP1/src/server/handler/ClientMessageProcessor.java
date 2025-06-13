@@ -22,6 +22,8 @@ public class ClientMessageProcessor {
                 case "updateProfileRequest" -> handleUpdateProfileRequest(doc, client);
                 case "findMatch" -> handleFindMatch(doc, client);
                 case "cancelMatch" -> handleCancelMatch(doc, client);
+                case "move" -> handleMoveRequest(doc, client);
+
 
                 default -> System.out.println("⚠️ Pedido desconhecido: " + type);
             }
@@ -114,4 +116,27 @@ public class ClientMessageProcessor {
                 player.timePlayed()
         );
     }
+
+    public static void handleMoveRequest(Document doc, ClientConnection client) {
+        String username = XmlMessageReader.getTextValue(doc, "username");
+        int row = Integer.parseInt(XmlMessageReader.getTextValue(doc, "row"));
+        int col = Integer.parseInt(XmlMessageReader.getTextValue(doc, "col"));
+
+        GameMatch match = ActiveGamesManager.getMatch(username);
+
+        if (match != null) {
+            boolean valid = match.applyMove(client, row, col);
+
+            if (valid) {
+                ClientConnection opponent = match.getOpponent(client);
+                String xml = XmlMessageBuilder.buildMoveRequest(username, row, col);
+                opponent.send(xml);
+            } else {
+                System.out.println("❌ Jogada inválida de " + username + " em [" + row + "," + col + "]");
+            }
+        } else {
+            System.out.println("⚠️ Sem jogo ativo para " + username);
+        }
+    }
+
 }

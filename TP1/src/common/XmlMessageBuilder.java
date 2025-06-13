@@ -68,4 +68,13 @@ public class XmlMessageBuilder {
                 "<firstToPlay>" + firstToPlay + "</firstToPlay>" +
                 "</gameStart>";
     }
+
+    public static String buildMoveRequest(String username, int row, int col) {
+        return "<move>" +
+                "<username>" + username + "</username>" +
+                "<row>" + row + "</row>" +
+                "<col>" + col + "</col>" +
+                "</move>";
+    }
+
 }

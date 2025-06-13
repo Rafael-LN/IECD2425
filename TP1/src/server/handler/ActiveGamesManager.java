@@ -7,41 +7,26 @@ import java.util.Map;
 
 public class ActiveGamesManager {
 
-    // Mapa: jogador → adversário
-    private static final Map<String, String> activeGames = new HashMap<>();
+    private static final Map<String, GameMatch> activeGames = new HashMap<>();
 
-    /**
-     * Regista um novo jogo entre dois jogadores.
-     */
-    public static synchronized void registerGame(ClientConnection player1, ClientConnection player2) {
-        activeGames.put(player1.getUsername(), player2.getUsername());
-        activeGames.put(player2.getUsername(), player1.getUsername());
-
-        System.out.println("🕹️ Jogo registado: " + player1.getUsername() + " vs " + player2.getUsername());
+    public static synchronized void registerGame(ClientConnection p1, ClientConnection p2, GameMatch match) {
+        activeGames.put(p1.getUsername(), match);
+        activeGames.put(p2.getUsername(), match);
     }
 
-    /**
-     * Retorna o adversário de um jogador.
-     */
-    public static synchronized String getOpponent(String username) {
+    public static synchronized GameMatch getMatch(String username) {
         return activeGames.get(username);
     }
 
-    /**
-     * Remove um jogo ativo (ex: após terminar ou desconexão).
-     */
-    public static synchronized void removeGame(String username) {
-        String opponent = activeGames.remove(username);
-        if (opponent != null) {
-            activeGames.remove(opponent);
-            System.out.println("🛑 Jogo terminado: " + username + " vs " + opponent);
+    public static synchronized void removeMatch(String username) {
+        GameMatch match = activeGames.get(username);
+        if (match != null) {
+            activeGames.remove(match.getCurrentTurn().getUsername());
+            activeGames.remove(match.getOpponent(match.getCurrentTurn()).getUsername());
         }
     }
 
-    /**
-     * Verifica se um jogador está atualmente num jogo.
-     */
-    public static synchronized boolean isPlaying(String username) {
+    public static synchronized boolean isInGame(String username) {
         return activeGames.containsKey(username);
     }
 }
