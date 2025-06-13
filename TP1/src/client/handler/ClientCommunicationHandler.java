@@ -90,6 +90,17 @@ public class ClientCommunicationHandler {
         }
     }
 
+    public void sendMove(String username, int row, int col) {
+        try {
+            String xml = XmlMessageBuilder.buildMoveRequest(username, row, col);
+            out.writeObject(xml);
+            // move não requer resposta imediata
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void receiveResponse() {
         try {
             String xml = (String) in.readObject();
