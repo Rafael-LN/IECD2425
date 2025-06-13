@@ -39,6 +39,10 @@ public class GoBangClient {
         communication.sendFindMatch(username);
     }
 
+    public void cancelMatch(String username) {
+        communication.sendCancelMatch(username);
+    }
+
     public UserProfileData getProfile() {
         return session.getProfile();
     }

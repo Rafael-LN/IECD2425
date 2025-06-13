@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Lobby extends JPanel {
 
-    private JButton searchButton;
+    private JButton searchButton, cancelButton;
 
     public Lobby(MainWindow gui, String username) {
 
@@ -32,21 +32,38 @@ public class Lobby extends JPanel {
         JLabel userLabel = GuiUtils.createLabel("Player: " + username, SwingConstants.CENTER);
         add(userLabel, gbc);
 
+        gbc.gridy++;
+        JLabel searchingLabel  = GuiUtils.createLabel("", SwingConstants.CENTER);
+        add(searchingLabel , gbc);
+
         // Botão "Find Match"
         gbc.gridy++;
         searchButton = GuiUtils.createButton("Find Match", new Color(100, 149, 237), _ -> {
-            // Atualizar UI imediatamente
-            searchButton.setText("Searching for opponent...");
-            searchButton.setEnabled(false);
-            searchButton.setForeground(Color.WHITE);
+            // UI update imediato
+            searchingLabel.setText("Searching for a match...");
+            searchButton.setVisible(false);
+            cancelButton.setVisible(true);
 
-            // Enviar pedido numa nova thread
+            // Enviar pedido numa thread separada
             new Thread(() -> {
-                System.out.println("🎯 Pedido de procura de partida enviado para o servidor...");
                 Map<String, String> dados = Map.of("username", username);
                 gui.sendRequest("findMatch", dados);
             }).start();
         });
+        add(searchButton, gbc);
+
+        cancelButton = GuiUtils.createButton("Cancel", new Color(100, 149, 237), _ -> {
+            Map<String, String> dados = Map.of("username", username);
+            gui.sendRequest("cancelMatch", dados);
+
+            // Reset UI
+            searchingLabel.setText("");
+            cancelButton.setVisible(false);
+            searchButton.setVisible(true);
+        });
+        cancelButton.setVisible(false);
+        add(cancelButton, gbc);
+
 
         add(searchButton, gbc);
 

@@ -19,8 +19,10 @@ public class ClientMessageProcessor {
             switch (type) {
                 case "loginRequest" -> handleLoginRequest(doc, client);
                 case "registerRequest" -> handleRegisterRequest(doc, client);
-                case "findMatch" -> handleFindMatch(doc, client);
                 case "updateProfileRequest" -> handleUpdateProfileRequest(doc, client);
+                case "findMatch" -> handleFindMatch(doc, client);
+                case "cancelMatch" -> handleCancelMatch(doc, client);
+
                 default -> System.out.println("⚠️ Pedido desconhecido: " + type);
             }
         } catch (Exception e) {
@@ -68,7 +70,23 @@ public class ClientMessageProcessor {
         client.setUsername(username);
         System.out.println("🔎 Jogador a procurar partida: " + username);
         MatchmakingQueue.addToQueue(client);
+
+        String response = XmlMessageBuilder.buildResponse("success", "🔎 Matchmaking started...", "findMatch");
+        client.send(response);
     }
+
+    private static void handleCancelMatch(Document doc, ClientConnection client) {
+        String username = XmlMessageReader.getTextValue(doc, "username");
+        client.setUsername(username);
+
+        System.out.println("⛔ Cancelamento de matchmaking: " + username);
+
+        MatchmakingQueue.removeFromQueue(client);
+
+        String response = XmlMessageBuilder.buildResponse("success", "Partida cancelada.", "cancelMatch");
+        client.send(response);
+    }
+
 
     private static void handleUpdateProfileRequest(Document doc, ClientConnection client) {
         String username = XmlMessageReader.getTextValue(doc, "username");

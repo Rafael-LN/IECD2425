@@ -29,4 +29,20 @@ public class MatchmakingQueue {
         }
     }
 
+    /**
+     * Remove um cliente da fila de matchmaking.
+     */
+    public static synchronized void removeFromQueue(ClientConnection client) {
+        if (client == null || client.getUsername() == null) {
+            System.err.println("⚠️ Cliente inválido para remoção da fila.");
+            return;
+        }
+
+        if (queue.removeIf(conn -> client.getUsername().equals(conn.getUsername()))) {
+            System.out.println("🎯 Jogador removido da fila: " + client.getUsername() + " (Total na fila: " + queue.size() + ")");
+        } else {
+            System.out.println("⚠️ Jogador não encontrado na fila: " + client.getUsername());
+        }
+    }
+
 }

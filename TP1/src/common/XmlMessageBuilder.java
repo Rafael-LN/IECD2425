@@ -56,6 +56,10 @@ public class XmlMessageBuilder {
                 "</findMatch>";
     }
 
+    public static String buildCancelMatchRequest(String username) {
+        return "<cancelMatch><username>" + username + "</username></cancelMatch>";
+    }
+
 
     public static String buildGameStart(String you, String opponent, boolean firstToPlay) {
         return "<gameStart>" +

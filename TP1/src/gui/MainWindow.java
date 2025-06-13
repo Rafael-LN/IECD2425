@@ -60,6 +60,10 @@ public class MainWindow extends JFrame implements GameClientListener {
                     campos.get("username")
             );
 
+            case "cancelMatch" -> client.cancelMatch(
+                    campos.get("username")
+            );
+
             case "updateProfile" -> client.updateProfile(
                     campos.get("username"),
                     campos.get("photo")

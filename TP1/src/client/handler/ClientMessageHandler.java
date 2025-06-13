@@ -53,6 +53,10 @@ public class ClientMessageHandler {
                             }
                         }
 
+                        case "cancelMatch" -> {
+                            System.out.println("❌ Matchmaking cancelado com sucesso.");
+                        }
+
                         case "findMatch" -> {
                             System.out.println("🔎 Pedido de matchmaking enviado. Aguardando emparelhamento...");
                         }
@@ -96,10 +100,6 @@ public class ClientMessageHandler {
             return "login";
         } else if (lowerMessage.contains("registo")) {
             return "register";
-        } else if (lowerMessage.contains("partida") || lowerMessage.contains("jogo")) {
-            return "findMatch";
-        } else if (lowerMessage.contains("perfil") || lowerMessage.contains("foto")) {
-            return "updateProfile";
         }
         return "unknown";
     }

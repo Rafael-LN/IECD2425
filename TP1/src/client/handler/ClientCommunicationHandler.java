@@ -79,6 +79,16 @@ public class ClientCommunicationHandler {
         }
     }
 
+    public void sendCancelMatch(String username) {
+        try {
+            String xml = XmlMessageBuilder.buildCancelMatchRequest(username);
+            System.out.println("🔼 Enviar cancelMatch para o servidor:\n \t" + xml);
+            out.writeObject(xml);
+            receiveResponse();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void receiveResponse() {
         try {
