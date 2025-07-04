@@ -1,117 +1,168 @@
 package server.handler;
 
-import common.XmlMessageBuilder;
 import common.XmlMessageReader;
+import common.XmlMessageBuilder;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import server.ClientConnection;
-import server.database.PlayerRecord;
 import server.database.UserDatabase;
+import server.database.PlayerRecord;
+
+import java.io.BufferedReader;
 
 public class ClientMessageProcessor {
 
-    private static final UserDatabase userDb = new UserDatabase();
+    private final ClientConnection client;
+    private final BufferedReader in;
+    private final UserDatabase userDb = new UserDatabase();
 
-    public static void process(Document doc, ClientConnection client) {
+    public ClientMessageProcessor(ClientConnection client, BufferedReader in) {
+        this.client = client;
+        this.in = in;
+    }
+
+    public void start() {
         try {
-            String type = doc.getDocumentElement().getLocalName();
-            System.out.println("📩 A processar pedido: " + type + " de " + (client.getUsername() != null ? client.getUsername() : "cliente desconhecido"));
-
-            switch (type) {
-                case "loginRequest" -> handleLoginRequest(doc, client);
-                case "registerRequest" -> handleRegisterRequest(doc, client);
-                case "updateProfileRequest" -> handleUpdateProfileRequest(doc, client);
-                case "findMatch" -> handleFindMatch(doc, client);
-                case "cancelMatch" -> handleCancelMatch(doc, client);
-
-                default -> System.out.println("⚠️ Pedido desconhecido: " + type);
+            while (true) {
+                String xml = in.readLine(); // Lê uma linha de XML
+                if (xml == null) break; // Fim de ligação
+                String xsdPath = "TP1/src/common/xsd/gameProtocol.xsd"; // Ajusta o caminho se necessário
+                if (!XmlMessageReader.validateXml(xml, xsdPath)) {
+                    client.send(XmlMessageBuilder.buildResponse(
+                        "error",
+                        "Mensagem XML inválida (não cumpre o XSD).",
+                        "xmlValidation"
+                    ));
+                    continue;
+                }
+                Document doc = XmlMessageReader.parseXml(xml);
+                process(doc);
             }
         } catch (Exception e) {
-            System.err.println("❌ Erro ao processar mensagem: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Ligação terminada: " + e.getMessage());
+        } finally {
+            client.closeConnection();
         }
     }
 
-    private static void handleLoginRequest(Document doc, ClientConnection client) {
-        String username = XmlMessageReader.getTextValue(doc, "username");
-        String password = XmlMessageReader.getTextValue(doc, "password");
+    public void process(Document doc) {
+        try {
+            Element payload = XmlMessageReader.getPayloadElement(doc);
+            String type = XmlMessageReader.getPayloadType(doc);
+
+            System.out.println("🔽 Recebido pedido para " + type);
+
+            switch (type) {
+                case "loginRequest" -> handleLogin(payload);
+                case "registerRequest" -> handleRegister(payload);
+                case "updateProfileRequest" -> handleUpdateProfile(payload);
+                case "findMatch" -> handleFindMatch(payload);
+                case "move" -> handleMove(payload);
+                case null -> System.err.println("Erro no tipo de mensagem recebida");
+                default -> System.err.println("Tipo de mensagem desconhecido: " + type);
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao processar mensagem: " + e.getMessage());
+        }
+    }
+
+    private void sendUserProfileResponse(String message, String operation, PlayerRecord player) {
+        String response = XmlMessageBuilder.buildAuthResponse(
+                "success",
+            message,
+            operation,
+            player.username(),
+            player.photoBase64(),
+            player.age(),
+            player.nationality(),
+            player.wins(),
+            player.losses(),
+            player.timePlayed()
+        );
+        client.send(response);
+    }
+
+    private void handleLogin(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        String password = XmlMessageReader.getTextValue(payload, "password");
+
         boolean success = userDb.login(username, password);
-        if (success) client.setUsername(username);
         if (success) {
-            var player = userDb.getPlayer(username);
-            String response = buildLoginResponse("success", "Login efetuado com sucesso.", username, player);
-            client.send(response);
+            client.setUsername(username);
+            PlayerRecord player = userDb.getPlayer(username);
+            sendUserProfileResponse("Login efetuado com sucesso.", "login", player);
         } else {
-            String response = XmlMessageBuilder.buildResponse("error", "Credenciais inválidas.", "login");
-            client.send(response);
+            client.send(XmlMessageBuilder.buildResponse(
+                "error",
+                "Credenciais inválidas.",
+                "login"
+            ));
         }
     }
 
-    private static void handleRegisterRequest(Document doc, ClientConnection client) {
-        String username = XmlMessageReader.getTextValue(doc, "username");
-        String password = XmlMessageReader.getTextValue(doc, "password");
-        int age = Integer.parseInt(XmlMessageReader.getTextValue(doc, "age"));
-        String nationality = XmlMessageReader.getTextValue(doc, "nationality");
-        String photo = XmlMessageReader.getTextValue(doc, "photo");
+    private void handleRegister(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        String password = XmlMessageReader.getTextValue(payload, "password");
+        String ageStr = XmlMessageReader.getTextValue(payload, "age");
+        String nationality = XmlMessageReader.getTextValue(payload, "nationality");
+        String photo = XmlMessageReader.getTextValue(payload, "photo");
+
+        int age;
+        try {
+            age = Integer.parseInt(ageStr);
+        } catch (NumberFormatException e) {
+            client.send(XmlMessageBuilder.buildResponse("error", "Idade inválida.", "register"));
+            return;
+        }
 
         boolean success = userDb.register(username, password, age, nationality, photo);
         if (success) {
-            var player = userDb.getPlayer(username);
-            String response = buildLoginResponse("success", "Registo efetuado com sucesso.", username, player);
-            client.send(response);
+            client.setUsername(username);
+            PlayerRecord player = userDb.getPlayer(username);
+            sendUserProfileResponse("Registo efetuado com sucesso.","register", player);
         } else {
-            String response = XmlMessageBuilder.buildResponse("error", "Utilizador já existe.", "register");
-            client.send(response);
+            client.send(XmlMessageBuilder.buildResponse(
+                "error",
+                "Utilizador já existe.",
+                "register"
+            ));
         }
-        System.out.println(success ? "✅ Registo bem-sucedido: " + username : "❌ Falha no registo: " + username);
     }
 
-    private static void handleFindMatch(Document doc, ClientConnection client) {
-        String username = XmlMessageReader.getTextValue(doc, "username");
-        client.setUsername(username);
-        System.out.println("🔎 Jogador a procurar partida: " + username);
-        MatchmakingQueue.addToQueue(client);
+    private void handleUpdateProfile(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        String photo = XmlMessageReader.getTextValue(payload, "photo");
 
-        String response = XmlMessageBuilder.buildResponse("success", "🔎 Matchmaking started...", "findMatch");
-        client.send(response);
-    }
-
-    private static void handleCancelMatch(Document doc, ClientConnection client) {
-        String username = XmlMessageReader.getTextValue(doc, "username");
-        client.setUsername(username);
-
-        System.out.println("⛔ Cancelamento de matchmaking: " + username);
-
-        MatchmakingQueue.removeFromQueue(client);
-
-        String response = XmlMessageBuilder.buildResponse("success", "Partida cancelada.", "cancelMatch");
-        client.send(response);
-    }
-
-
-    private static void handleUpdateProfileRequest(Document doc, ClientConnection client) {
-        String username = XmlMessageReader.getTextValue(doc, "username");
-        String photoBase64 = XmlMessageReader.getTextValue(doc, "photo");
-        boolean success = userDb.updatePhoto(username, photoBase64);
+        boolean success = userDb.updatePhoto(username, photo);
         String response = XmlMessageBuilder.buildResponse(
                 success ? "success" : "error",
-                success ? "Perfil atualizado com sucesso." : "Erro ao atualizar perfil.",
+                success ? "Foto atualizada com sucesso." : "Erro ao atualizar foto.",
                 "updateProfile"
         );
         client.send(response);
-        System.out.println(success ? "✅ Foto atualizada para: " + username : "❌ Erro ao atualizar foto para: " + username);
     }
 
-    private static String buildLoginResponse(String status, String message, String username, PlayerRecord player) {
-        return XmlMessageBuilder.buildLoginResponse(
-                status,
-                message,
-                username,
-                player.photoBase64(),
-                player.age(),
-                player.nationality(),
-                player.wins(),
-                player.losses(),
-                player.timePlayed()
-        );
+    private void handleFindMatch(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        client.setUsername(username);
+
+        String response = XmlMessageBuilder.buildFindMatchRequest(username);
+        client.send(response);
+
+        MatchmakingQueue.addToQueue(client);
+    }
+
+    private void handleMove(Element payload) {
+        String rowStr = XmlMessageReader.getTextValue(payload, "row");
+        String colStr = XmlMessageReader.getTextValue(payload, "col");
+        int row, col;
+        try {
+            row = Integer.parseInt(rowStr);
+            col = Integer.parseInt(colStr);
+        } catch (NumberFormatException e) {
+            client.send(XmlMessageBuilder.buildResponse("error", "Coordenadas inválidas.", "move"));
+            return;
+        }
+        ActiveGamesManager.processMove(client, row, col);
     }
 }

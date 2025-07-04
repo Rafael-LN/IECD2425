@@ -30,9 +30,9 @@ public class UserDatabase implements Serializable {
 
     private void saveToFile() {
         try {
-            File dir = new File(FILE_PATH);
-            if (!dir.exists()) {
-                dir.mkdirs();
+            File file = new File(FILE_PATH);
+            if (!file.exists()) {
+                file.createNewFile();
             }
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH));
             oos.writeObject(users);

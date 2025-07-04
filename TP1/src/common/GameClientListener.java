@@ -9,5 +9,6 @@ public interface GameClientListener {
 
     // Futuro: outros eventos
     void onGameStart(String you, String opponent, boolean youStart);
+    void onMove(int row, int col, String who);
     void onConnectionClosed();
 }

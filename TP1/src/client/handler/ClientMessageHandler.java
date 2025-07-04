@@ -5,6 +5,7 @@ import common.GameClientListener;
 import common.UserProfileData;
 import common.XmlMessageReader;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class ClientMessageHandler {
 
@@ -17,13 +18,14 @@ public class ClientMessageHandler {
     }
 
     public void handle(Document doc) {
-        String type = XmlMessageReader.getRootElement(doc);
+        Element payload = XmlMessageReader.getPayloadElement(doc);
+        String type = XmlMessageReader.getPayloadType(doc);
 
         switch (type) {
             case "response" -> {
-                String status = XmlMessageReader.getTextValue(doc, "status");
-                String msg = XmlMessageReader.getTextValue(doc, "message");
-                String operation = XmlMessageReader.getTextValue(doc, "operation");
+                String status = XmlMessageReader.getTextValue(payload, "status");
+                String msg = XmlMessageReader.getTextValue(payload, "message");
+                String operation = XmlMessageReader.getTextValue(payload, "operation");
 
                 if (operation == null) {
                     operation = determineOperationType(msg);
@@ -34,20 +36,20 @@ public class ClientMessageHandler {
 
                     switch (operation) {
                         case "login" -> {
-                            populateUserProfile(doc);
+                            populateUserProfile(payload);
                             session.login(session.getProfile());
                             gui.onLoginSuccess(session.getProfile().username());
                         }
 
                         case "register" -> {
-                            populateUserProfile(doc);
+                            populateUserProfile(payload);
                             session.login(session.getProfile());
                             gui.onRegisterSuccess(session.getProfile().username());
                         }
 
                         case "updateProfile" -> {
                             System.out.println("✅ Foto de perfil atualizada com sucesso.");
-                            String updatedPhoto = XmlMessageReader.getTextValue(doc, "photo");
+                            String updatedPhoto = XmlMessageReader.getTextValue(payload, "photo");
                             if (updatedPhoto != null && !updatedPhoto.isEmpty()) {
                                 session.updatePhoto(updatedPhoto);
                             }
@@ -72,24 +74,33 @@ public class ClientMessageHandler {
             }
 
             case "gameStart" -> {
-                String player = XmlMessageReader.getTextValue(doc, "player");
-                String opponent = XmlMessageReader.getTextValue(doc, "opponent");
-                boolean isPlayerFirst = Boolean.parseBoolean(XmlMessageReader.getTextValue(doc, "firstToPlay"));
+                String player = XmlMessageReader.getTextValue(payload, "player");
+                String opponent = XmlMessageReader.getTextValue(payload, "opponent");
+                boolean isPlayerFirst = XmlMessageReader.getBooleanValue(payload, "firstToPlay");
 
                 System.out.println("🎮 Match iniciado com: " + opponent + " | Primeiro a jogar: " + (isPlayerFirst ? player : opponent));
                 gui.onGameStart(player, opponent, isPlayerFirst);
             }
+
+            case "move" -> {
+                String who = XmlMessageReader.getTextValue(payload, "player");
+                int row = XmlMessageReader.getIntValue(payload, "row");
+                int col = XmlMessageReader.getIntValue(payload, "col");
+
+                System.out.println("📥 Jogada recebida: " + who + " @ [" + row + "," + col + "]");
+                gui.onMove(row, col, who);
+            }
         }
     }
 
-    private void populateUserProfile(Document doc) {
-        String username = XmlMessageReader.getTextValue(doc, "username");
-        String photoBase64 = XmlMessageReader.getTextValue(doc, "photo");
-        int age = Integer.parseInt(XmlMessageReader.getTextValue(doc, "age"));
-        String nationality = XmlMessageReader.getTextValue(doc, "nationality");
-        int wins = Integer.parseInt(XmlMessageReader.getTextValue(doc, "wins"));
-        int losses = Integer.parseInt(XmlMessageReader.getTextValue(doc, "losses"));
-        long timePlayed = Long.parseLong(XmlMessageReader.getTextValue(doc, "timePlayed"));
+    private void populateUserProfile(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        String photoBase64 = XmlMessageReader.getTextValue(payload, "photo");
+        int age = XmlMessageReader.getIntValue(payload, "age");
+        String nationality = XmlMessageReader.getTextValue(payload, "nationality");
+        int wins = XmlMessageReader.getIntValue(payload, "wins");
+        int losses = XmlMessageReader.getIntValue(payload, "losses");
+        long timePlayed = Long.parseLong(XmlMessageReader.getTextValue(payload, "timePlayed"));
 
         session.login(new UserProfileData(username, age, nationality, wins, losses, timePlayed, photoBase64));
     }

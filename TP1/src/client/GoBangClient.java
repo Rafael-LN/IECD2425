@@ -5,6 +5,8 @@ import client.handler.ClientMessageHandler;
 import common.UserProfileData;
 import gui.MainWindow;
 
+import java.util.Map;
+
 public class GoBangClient {
 
     private final ClientSession session;
@@ -37,6 +39,13 @@ public class GoBangClient {
 
     public void findMatch(String username) {
         communication.sendFindMatch(username);
+    }
+
+    public void sendMove(Map<String, String> moveData) {
+        String username = session.getProfile().username();
+        int row = Integer.parseInt(moveData.get("row"));
+        int col = Integer.parseInt(moveData.get("col"));
+        communication.sendMove(username, row, col);
     }
 
     public void cancelMatch(String username) {

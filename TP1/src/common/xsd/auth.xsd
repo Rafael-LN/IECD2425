@@ -1,7 +1,4 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="http://tp1/auth"
-           xmlns="http://tp1/auth"
-           elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="loginRequest">
         <xs:complexType>
@@ -20,6 +17,23 @@
                 <xs:element name="age" type="xs:int"/>
                 <xs:element name="nationality" type="xs:string"/>
                 <xs:element name="photo" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="response">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status" type="xs:string"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="operation" type="xs:string"/>
+                <xs:element name="username" type="xs:string" minOccurs="0"/>
+                <xs:element name="photo" type="xs:string" minOccurs="0"/>
+                <xs:element name="age" type="xs:int" minOccurs="0"/>
+                <xs:element name="nationality" type="xs:string" minOccurs="0"/>
+                <xs:element name="wins" type="xs:int" minOccurs="0"/>
+                <xs:element name="losses" type="xs:int" minOccurs="0"/>
+                <xs:element name="timePlayed" type="xs:long" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

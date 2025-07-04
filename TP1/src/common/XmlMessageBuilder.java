@@ -2,44 +2,52 @@ package common;
 
 public class XmlMessageBuilder {
 
+    
+    private static String wrapWithMessage(String contentXml) {
+        return "<message>" + contentXml + "</message>";
+    }
+
     public static String buildLoginRequest(String username, String password) {
-        return "<loginRequest xmlns=\"http://tp1/auth\">" +
+        String content = "<loginRequest>" +
                 "<username>" + username + "</username>" +
                 "<password>" + password + "</password>" +
                 "</loginRequest>";
+        return wrapWithMessage(content);
     }
 
     public static String buildRegisterRequest(String username, String password, int age, String nationality, String photoPath) {
-        return "<registerRequest xmlns=\"http://tp1/auth\">" +
+        String content = "<registerRequest>" +
                 "<username>" + username + "</username>" +
                 "<password>" + password + "</password>" +
                 "<age>" + age + "</age>" +
                 "<nationality>" + nationality + "</nationality>" +
                 "<photo>" + photoPath + "</photo>" +
                 "</registerRequest>";
+        return wrapWithMessage(content);
     }
 
     public static String buildUpdateProfileRequest(String username, String photoBase64) {
-        return "<updateProfileRequest>" +
+        String content = "<updateProfileRequest>" +
                 "<username>" + username + "</username>" +
                 "<photo>" + photoBase64 + "</photo>" +
                 "</updateProfileRequest>";
+        return wrapWithMessage(content);
     }
-
 
     public static String buildResponse(String status, String message, String operation) {
-        return "<response>" +
+        String content = "<response>" +
                 "<status>" + status + "</status>" +
                 "<message>" + message + "</message>" +
-                "<operation>" + operation + "</operation>" +
+                "<operation>" + operation + "</operation>"+
                 "</response>";
+        return wrapWithMessage(content);
     }
 
-    public static String buildLoginResponse(String status, String message, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed) {
-        return "<response>" +
+    public static String buildAuthResponse(String status, String message, String operation, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed) {
+        String content = "<response>" +
                 "<status>" + status + "</status>" +
                 "<message>" + message + "</message>" +
-                "<operation>login</operation>" +
+                "<operation>"+ operation +"</operation>" +
                 "<username>" + username + "</username>" +
                 "<photo>" + (photoBase64 != null ? photoBase64 : "") + "</photo>" +
                 "<age>" + age + "</age>" +
@@ -48,24 +56,38 @@ public class XmlMessageBuilder {
                 "<losses>" + losses + "</losses>" +
                 "<timePlayed>" + timePlayed + "</timePlayed>" +
                 "</response>";
+        return wrapWithMessage(content);
     }
 
     public static String buildFindMatchRequest(String username) {
-        return "<findMatch>" +
+        String content = "<findMatch>" +
                 "<username>" + username + "</username>" +
                 "</findMatch>";
+        return wrapWithMessage(content);
     }
 
     public static String buildCancelMatchRequest(String username) {
-        return "<cancelMatch><username>" + username + "</username></cancelMatch>";
+        String content = "<cancelMatch>" +
+                "<username>" + username + "</username>" +
+                "</cancelMatch>";
+        return wrapWithMessage(content);
     }
 
-
-    public static String buildGameStart(String you, String opponent, boolean firstToPlay) {
-        return "<gameStart>" +
-                "<player>" + you + "</player>" +
+    public static String buildGameStart(String player, String opponent, boolean firstToPlay) {
+        String content = "<gameStart>" +
+                "<player>" + player + "</player>" +
                 "<opponent>" + opponent + "</opponent>" +
                 "<firstToPlay>" + firstToPlay + "</firstToPlay>" +
                 "</gameStart>";
+        return wrapWithMessage(content);
+    }
+
+    public static String buildMoveRequest(String username, int row, int col) {
+        String content = "<move>" +
+                "<player>" + username + "</player>" +
+                "<row>" + row + "</row>" +
+                "<col>" + col + "</col>" +
+                "</move>";
+        return wrapWithMessage(content);
     }
 }

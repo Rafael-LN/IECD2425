@@ -1,15 +1,12 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="http://tp1/player"
-           xmlns="http://tp1/player"
-           elementFormDefault="qualified">
-
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!-- Namespace removido para simplificar a validação e parsing -->
     <xs:element name="player">
         <xs:complexType>
             <xs:attribute name="username" type="xs:string" use="required"/>
-            <xs:attribute name="score" type="xs:int" use="optional"/>
-            <xs:attribute name="wins" type="xs:int" use="optional"/>
-            <xs:attribute name="losses" type="xs:int" use="optional"/>
-            <xs:attribute name="timePlayed" type="xs:duration" use="optional"/>
+            <xs:attribute name="score" type="xs:int"/>
+            <xs:attribute name="wins" type="xs:int"/>
+            <xs:attribute name="losses" type="xs:int"/>
+            <xs:attribute name="timePlayed" type="xs:duration"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

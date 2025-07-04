@@ -1,13 +1,10 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="http://tp1/game"
-           xmlns="http://tp1/game"
-           elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="move">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="player" type="xs:string"/>
-                <xs:element name="x">
+                <xs:element name="row">
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0"/>
@@ -15,7 +12,7 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="y">
+                <xs:element name="col">
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0"/>

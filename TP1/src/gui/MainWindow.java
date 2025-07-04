@@ -3,6 +3,7 @@ package gui;
 import client.GoBangClient;
 import common.GameClientListener;
 import common.UserProfileData;
+import gui.board.GameBoardPanel;
 import gui.enums.PanelType;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class MainWindow extends JFrame implements GameClientListener {
     private final GoBangClient client;
     private final JPanel cardPanel;
     private final CardLayout cardLayout;
+    private GameBoardPanel gamePanel;
 
     public MainWindow(GoBangClient client) {
         this.client = client;
@@ -68,6 +70,8 @@ public class MainWindow extends JFrame implements GameClientListener {
                     campos.get("username"),
                     campos.get("photo")
             );
+
+            case "move" -> client.sendMove(campos);
 
         }
     }
@@ -155,7 +159,18 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onGameStart(String you, String opponent, boolean youStart) {
-        // futura lógica
+        SwingUtilities.invokeLater(() -> {
+            gamePanel = new GameBoardPanel(this, you, opponent, youStart);
+            cardPanel.add(gamePanel, PanelType.GAME.name());
+            changePanel(PanelType.GAME);
+        });
+    }
+
+    @Override
+    public void onMove(int row, int col, String who) {
+        if (gamePanel != null) {
+            SwingUtilities.invokeLater(() -> gamePanel.applyMove(row, col, who));
+        }
     }
 
     @Override

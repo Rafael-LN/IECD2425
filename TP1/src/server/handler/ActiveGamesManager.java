@@ -7,41 +7,52 @@ import java.util.Map;
 
 public class ActiveGamesManager {
 
-    // Mapa: jogador → adversário
-    private static final Map<String, String> activeGames = new HashMap<>();
+    private static final Map<ClientConnection, GameMatch> activeGames = new HashMap<>();
 
-    /**
-     * Regista um novo jogo entre dois jogadores.
-     */
-    public static synchronized void registerGame(ClientConnection player1, ClientConnection player2) {
-        activeGames.put(player1.getUsername(), player2.getUsername());
-        activeGames.put(player2.getUsername(), player1.getUsername());
-
-        System.out.println("🕹️ Jogo registado: " + player1.getUsername() + " vs " + player2.getUsername());
+    public static synchronized void registerGame(ClientConnection p1, ClientConnection p2, GameMatch match) {
+        activeGames.put(p1, match);
+        activeGames.put(p2, match);
     }
 
-    /**
-     * Retorna o adversário de um jogador.
-     */
-    public static synchronized String getOpponent(String username) {
-        return activeGames.get(username);
+    public static synchronized GameMatch getMatch(ClientConnection client) {
+        return activeGames.get(client);
     }
 
-    /**
-     * Remove um jogo ativo (ex: após terminar ou desconexão).
-     */
-    public static synchronized void removeGame(String username) {
-        String opponent = activeGames.remove(username);
-        if (opponent != null) {
-            activeGames.remove(opponent);
-            System.out.println("🛑 Jogo terminado: " + username + " vs " + opponent);
+    public static synchronized void removeMatch(ClientConnection client) {
+        GameMatch match = activeGames.get(client);
+        if (match != null) {
+            activeGames.remove(match.getPlayer1());
+            activeGames.remove(match.getPlayer2());
         }
     }
 
-    /**
-     * Verifica se um jogador está atualmente num jogo.
-     */
-    public static synchronized boolean isPlaying(String username) {
-        return activeGames.containsKey(username);
+    public static synchronized boolean isInGame(ClientConnection client) {
+        return activeGames.containsKey(client);
+    }
+
+    public static synchronized void processMove(ClientConnection client, int row, int col) {
+        GameMatch match = activeGames.get(client);
+        if (match != null) {
+            boolean valid = match.applyMove(client, row, col);
+            if (valid) {
+                // Mensagem de jogada válida para ambos os jogadores
+                String moveXml = common.XmlMessageBuilder.buildMoveRequest(client.getUsername(), row, col);
+                client.send(moveXml); // Confirmação ao jogador que jogou
+                ClientConnection opponent = match.getOpponent(client);
+                if (opponent != null) {
+                    opponent.send(moveXml); // Atualização ao adversário
+                }
+                // Aqui podes adicionar lógica para verificar vitória/empate e enviar mensagem de fim de jogo
+            } else {
+                // Jogada inválida
+                client.send(common.XmlMessageBuilder.buildResponse(
+                    "error",
+                    "Jogada inválida (posição ocupada ou não é o seu turno).",
+                    "move"
+                ));
+            }
+        } else {
+            System.err.println("⚠️ Jogador não está em nenhum jogo ativo.");
+        }
     }
 }
