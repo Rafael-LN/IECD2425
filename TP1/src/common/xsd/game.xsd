@@ -4,7 +4,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="player" type="xs:string"/>
-                <xs:element name="x">
+                <xs:element name="row">
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0"/>
@@ -12,7 +12,7 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="y">
+                <xs:element name="col">
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0"/>

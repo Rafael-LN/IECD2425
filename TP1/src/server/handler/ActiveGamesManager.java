@@ -33,7 +33,24 @@ public class ActiveGamesManager {
     public static synchronized void processMove(ClientConnection client, int row, int col) {
         GameMatch match = activeGames.get(client);
         if (match != null) {
-            match.applyMove(client, row, col);
+            boolean valid = match.applyMove(client, row, col);
+            if (valid) {
+                // Mensagem de jogada válida para ambos os jogadores
+                String moveXml = common.XmlMessageBuilder.buildMoveRequest(client.getUsername(), row, col);
+                client.send(moveXml); // Confirmação ao jogador que jogou
+                ClientConnection opponent = match.getOpponent(client);
+                if (opponent != null) {
+                    opponent.send(moveXml); // Atualização ao adversário
+                }
+                // Aqui podes adicionar lógica para verificar vitória/empate e enviar mensagem de fim de jogo
+            } else {
+                // Jogada inválida
+                client.send(common.XmlMessageBuilder.buildResponse(
+                    "error",
+                    "Jogada inválida (posição ocupada ou não é o seu turno).",
+                    "move"
+                ));
+            }
         } else {
             System.err.println("⚠️ Jogador não está em nenhum jogo ativo.");
         }

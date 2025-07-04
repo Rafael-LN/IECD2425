@@ -145,14 +145,11 @@ public class ClientMessageProcessor {
     private void handleFindMatch(Element payload) {
         String username = XmlMessageReader.getTextValue(payload, "username");
         client.setUsername(username);
-        MatchmakingQueue.addToQueue(client);
 
-        String response = XmlMessageBuilder.buildResponse(
-                "success",
-                "🔎 Matchmaking started...",
-                "findMatch"
-        );
+        String response = XmlMessageBuilder.buildFindMatchRequest(username);
         client.send(response);
+
+        MatchmakingQueue.addToQueue(client);
     }
 
     private void handleMove(Element payload) {

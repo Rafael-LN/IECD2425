@@ -83,7 +83,7 @@ public class ClientMessageHandler {
             }
 
             case "move" -> {
-                String who = XmlMessageReader.getTextValue(payload, "username");
+                String who = XmlMessageReader.getTextValue(payload, "player");
                 int row = XmlMessageReader.getIntValue(payload, "row");
                 int col = XmlMessageReader.getIntValue(payload, "col");
 

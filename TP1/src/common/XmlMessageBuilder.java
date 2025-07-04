@@ -84,7 +84,7 @@ public class XmlMessageBuilder {
 
     public static String buildMoveRequest(String username, int row, int col) {
         String content = "<move>" +
-                "<username>" + username + "</username>" +
+                "<player>" + username + "</player>" +
                 "<row>" + row + "</row>" +
                 "<col>" + col + "</col>" +
                 "</move>";
