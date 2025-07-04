@@ -11,4 +11,5 @@ public interface GameClientListener {
     void onGameStart(String you, String opponent, boolean youStart);
     void onMove(int row, int col, String who);
     void onConnectionClosed();
+    void onGameEnd(String winner, String reason, String message);
 }

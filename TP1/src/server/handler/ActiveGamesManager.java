@@ -35,16 +35,26 @@ public class ActiveGamesManager {
         if (match != null) {
             boolean valid = match.applyMove(client, row, col);
             if (valid) {
-                // Mensagem de jogada válida para ambos os jogadores
                 String moveXml = common.XmlMessageBuilder.buildMoveRequest(client.getUsername(), row, col);
-                client.send(moveXml); // Confirmação ao jogador que jogou
+                client.send(moveXml);
                 ClientConnection opponent = match.getOpponent(client);
                 if (opponent != null) {
-                    opponent.send(moveXml); // Atualização ao adversário
+                    opponent.send(moveXml);
                 }
-                // Aqui podes adicionar lógica para verificar vitória/empate e enviar mensagem de fim de jogo
+                // Verificar vitória
+                if (match.isVictory(row, col)) {
+                    String winMsg = common.XmlMessageBuilder.buildGameEnd(client.getUsername(), "vitória", "Parabéns, ganhaste!");
+                    String loseMsg = common.XmlMessageBuilder.buildGameEnd(client.getUsername(), "derrota", "Perdeste o jogo.");
+                    client.send(winMsg);
+                    if (opponent != null) opponent.send(loseMsg);
+                    removeMatch(client);
+                } else if (match.isDraw()) {
+                    String drawMsg = common.XmlMessageBuilder.buildGameEnd("", "empate", "O jogo terminou empatado.");
+                    client.send(drawMsg);
+                    if (opponent != null) opponent.send(drawMsg);
+                    removeMatch(client);
+                }
             } else {
-                // Jogada inválida
                 client.send(common.XmlMessageBuilder.buildResponse(
                     "error",
                     "Jogada inválida (posição ocupada ou não é o seu turno).",

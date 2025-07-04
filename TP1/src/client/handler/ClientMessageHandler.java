@@ -90,6 +90,14 @@ public class ClientMessageHandler {
                 System.out.println("📥 Jogada recebida: " + who + " @ [" + row + "," + col + "]");
                 gui.onMove(row, col, who);
             }
+
+            case "gameEnd" -> {
+                String winner = XmlMessageReader.getTextValue(payload, "winner");
+                String reason = XmlMessageReader.getTextValue(payload, "reason");
+                String msg = XmlMessageReader.getTextValue(payload, "message");
+                System.out.println("🏁 Fim de jogo: " + reason + ". " + msg + (winner != null && !winner.isEmpty() ? " Vencedor: " + winner : ""));
+                gui.onGameEnd(winner, reason, msg);
+            }
         }
     }
 

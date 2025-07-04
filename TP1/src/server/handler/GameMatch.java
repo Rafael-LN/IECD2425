@@ -50,6 +50,55 @@ public class GameMatch {
         return true;
     }
 
+    // Verifica se houve vitória a partir da última jogada
+    public boolean isVictory(int row, int col) {
+        CellState playerState = board[row][col];
+        if (playerState == CellState.EMPTY) return false;
+        // Verifica em todas as direções (horizontal, vertical, diagonais)
+        return checkDirection(row, col, 0, 1, playerState)   // Horizontal
+            || checkDirection(row, col, 1, 0, playerState)   // Vertical
+            || checkDirection(row, col, 1, 1, playerState)   // Diagonal descendente
+            || checkDirection(row, col, 1, -1, playerState); // Diagonal ascendente
+    }
+
+    // Verifica se há 5 em linha numa direção
+    private boolean checkDirection(int row, int col, int dRow, int dCol, CellState playerState) {
+        int count = 1;
+        // Para trás
+        int r = row - dRow, c = col - dCol;
+        while (isValid(r, c) && board[r][c] == playerState) {
+            count++;
+            r -= dRow;
+            c -= dCol;
+        }
+        // Para a frente
+        r = row + dRow;
+        c = col + dCol;
+        while (isValid(r, c) && board[r][c] == playerState) {
+            count++;
+            r += dRow;
+            c += dCol;
+        }
+        return count >= 5;
+    }
+
+    // Verifica se a posição está dentro do tabuleiro
+    private boolean isValid(int row, int col) {
+        return row >= 0 && row < 15 && col >= 0 && col < 15;
+    }
+
+    // Verifica se o tabuleiro está cheio (empate)
+    public boolean isDraw() {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                if (board[i][j] == CellState.EMPTY) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public ClientConnection getOpponent(ClientConnection player) {
         return player.equals(player1) ? player2 : player1;
     }
