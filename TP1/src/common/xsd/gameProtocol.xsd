@@ -1,22 +1,17 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:auth="http://tp1/auth"
-           xmlns:play="http://tp1/game"
-           xmlns:player="http://tp1/player"
-           targetNamespace="http://tp1/protocol"
-           elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:import namespace="http://tp1/auth" schemaLocation="auth.xsd"/>
-    <xs:import namespace="http://tp1/game" schemaLocation="game.xsd"/>
-    <xs:import namespace="http://tp1/player" schemaLocation="player.xsd"/>
+    <xs:include schemaLocation="auth.xsd"/>
+    <xs:include schemaLocation="game.xsd"/>
+    <xs:include schemaLocation="player.xsd"/>
 
     <xs:element name="message">
         <xs:complexType>
             <xs:choice>
-                <xs:element ref="auth:loginRequest"/>
-                <xs:element ref="auth:registerRequest"/>
-                <xs:element ref="play:move"/>
-                <xs:element ref="play:gameStart"/>
-                <xs:element ref="player:player" />
+                <xs:element ref="loginRequest"/>
+                <xs:element ref="registerRequest"/>
+                <xs:element ref="move"/>
+                <xs:element ref="gameStart"/>
+                <xs:element ref="player"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
