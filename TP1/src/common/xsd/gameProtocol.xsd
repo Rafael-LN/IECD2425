@@ -3,6 +3,9 @@
     <xs:include schemaLocation="auth.xsd"/>
     <xs:include schemaLocation="game.xsd"/>
     <xs:include schemaLocation="player.xsd"/>
+    <xs:include schemaLocation="updateProfileRequest.xsd"/>
+    <xs:include schemaLocation="findMatch.xsd"/>
+    <xs:include schemaLocation="cancelMatch.xsd"/>
 
     <xs:element name="message">
         <xs:complexType>
