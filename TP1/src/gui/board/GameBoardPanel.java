@@ -1,7 +1,5 @@
 package gui.board;
 
-import client.GoBangClient;
-import common.XmlMessageBuilder;
 import gui.enums.PanelType;
 import gui.MainWindow;
 
@@ -28,7 +26,6 @@ public class GameBoardPanel extends JPanel implements ClickHandler {
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(255, 250, 240));
 
-        // Top panel
         JLabel title = new JLabel("You: " + player + " vs " + opponent, SwingConstants.CENTER);
         title.setFont(new Font("Roboto", Font.BOLD, 16));
 
@@ -42,12 +39,10 @@ public class GameBoardPanel extends JPanel implements ClickHandler {
         top.add(turnLabel);
         add(top, BorderLayout.NORTH);
 
-        // Board
         board = new BoardPanel(15, this);
         board.setReadOnly(!isMyTurn);
         add(board, BorderLayout.CENTER);
 
-        // Bottom
         JButton quit = new JButton("Quit Game");
         quit.setBackground(new Color(240, 128, 128));
         quit.addActionListener(e -> gui.changePanel(PanelType.LOBBY));
@@ -64,26 +59,24 @@ public class GameBoardPanel extends JPanel implements ClickHandler {
         CellButton cell = board.getCell(row, col);
         if (cell.getEstado() != CellState.EMPTY) return;
 
-        // Update UI
-        cell.setEstado(CellState.PLAYER1);
+        // Enviar jogada para o servidor (sem aplicar localmente)
+        Map<String, String> move = new HashMap<>();
+        move.put("row", String.valueOf(row));
+        move.put("col", String.valueOf(col));
+        gui.sendRequest("move", move);
+
         board.setReadOnly(true);
         isMyTurn = false;
         updateTurnLabel();
-
-        // Send move to server
-        Map<String, String> move = Map.of(
-                "row", String.valueOf(row),
-                "col", String.valueOf(col)
-        );
-        gui.sendRequest("move", move);
-
     }
 
-    public void applyOpponentMove(int row, int col) {
+    public void applyMove(int row, int col, String who) {
         CellButton cell = board.getCell(row, col);
-        cell.setEstado(CellState.PLAYER2);
-        isMyTurn = true;
-        board.setReadOnly(false);
+        CellState state = who.equals(player) ? CellState.PLAYER1 : CellState.PLAYER2;
+        cell.setEstado(state);
+
+        isMyTurn = who.equals(opponent);
+        board.setReadOnly(!isMyTurn);
         updateTurnLabel();
     }
 

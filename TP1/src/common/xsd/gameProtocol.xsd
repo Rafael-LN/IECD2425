@@ -12,9 +12,13 @@
             <xs:choice>
                 <xs:element ref="loginRequest"/>
                 <xs:element ref="registerRequest"/>
+                <xs:element ref="response"/>
                 <xs:element ref="move"/>
                 <xs:element ref="gameStart"/>
                 <xs:element ref="player"/>
+                <xs:element ref="updateProfileRequest"/>
+                <xs:element ref="findMatch"/>
+                <xs:element ref="cancelMatch"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>

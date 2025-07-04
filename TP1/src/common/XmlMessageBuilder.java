@@ -38,7 +38,8 @@ public class XmlMessageBuilder {
         String content = "<response>" +
                 "<status>" + status + "</status>" +
                 "<message>" + message + "</message>" +
-                "<operation>" + operation + "</operation>";
+                "<operation>" + operation + "</operation>"+
+                "</response>";
         return wrapWithMessage(content);
     }
 
