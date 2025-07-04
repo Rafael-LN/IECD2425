@@ -6,6 +6,7 @@
     <xs:include schemaLocation="updateProfileRequest.xsd"/>
     <xs:include schemaLocation="findMatch.xsd"/>
     <xs:include schemaLocation="cancelMatch.xsd"/>
+    <xs:include schemaLocation="gameEnd.xsd"/>
 
     <xs:element name="message">
         <xs:complexType>
