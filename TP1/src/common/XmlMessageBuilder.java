@@ -90,4 +90,16 @@ public class XmlMessageBuilder {
                 "</move>";
         return wrapWithMessage(content);
     }
+
+    public static String buildGameEnd(String winner, String reason, String message) {
+        String content = "<gameEnd>";
+        if (winner != null && !winner.isEmpty()) {
+            content += "<winner>" + winner + "</winner>";
+        }
+        content += "<reason>" + reason + "</reason>";
+        content += "<message>" + message + "</message>";
+        content += "</gameEnd>";
+        return wrapWithMessage(content);
+    }
 }
+

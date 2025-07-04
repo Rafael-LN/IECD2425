@@ -178,4 +178,23 @@ public class MainWindow extends JFrame implements GameClientListener {
         showError("Ligação encerrada", "O servidor fechou a ligação.");
         dispose();
     }
+
+    @Override
+    public void onGameEnd(String winner, String reason, String message) {
+        // Mostra um diálogo informativo ao utilizador com o resultado do jogo
+        String titulo = "Fim de Jogo";
+        StringBuilder msg = new StringBuilder();
+        if (reason != null) {
+            msg.append("Resultado: ").append(reason).append("\n");
+        }
+        if (winner != null && !winner.isEmpty()) {
+            msg.append("Vencedor: ").append(winner).append("\n");
+        }
+        if (message != null) {
+            msg.append(message);
+        }
+        JOptionPane.showMessageDialog(this, msg.toString(), titulo, JOptionPane.INFORMATION_MESSAGE);
+        // Volta ao lobby após o fim do jogo
+        changePanel(gui.enums.PanelType.LOBBY);
+    }
 }
