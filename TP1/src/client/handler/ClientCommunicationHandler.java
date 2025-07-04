@@ -1,7 +1,6 @@
 package client.handler;
 
-import common.*;
-import org.w3c.dom.Document;
+import common.XmlMessageBuilder;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,6 +29,8 @@ public class ClientCommunicationHandler {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
             System.out.println("✅ Ligado ao servidor.");
+            // Iniciar thread dedicada à escuta de mensagens do servidor
+            new ServerListener(in, messageHandler).start();
         } catch (IOException e) {
             System.err.println("❌ Falha na ligação: " + e.getMessage());
         }
@@ -38,9 +39,8 @@ public class ClientCommunicationHandler {
     public void sendLogin(String username, String password) {
         try {
             String xml = XmlMessageBuilder.buildLoginRequest(username, password);
-            out.writeObject(xml);System.out.println("🔼 Enviado:\n" + xml);
+            out.writeObject(xml);
             System.out.println("🔼 Enviado:\n \t" + xml);
-            receiveResponse();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,7 +50,6 @@ public class ClientCommunicationHandler {
         try {
             String xml = XmlMessageBuilder.buildRegisterRequest(username, password, age, nationality, photoPath);
             out.writeObject(xml);
-            receiveResponse();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,7 +60,6 @@ public class ClientCommunicationHandler {
             String xml = XmlMessageBuilder.buildUpdateProfileRequest(username, photoBase64);
             System.out.println("🔼 Enviar updateProfile para o servidor:\n" + xml);
             out.writeObject(xml);
-            receiveResponse();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,7 +71,6 @@ public class ClientCommunicationHandler {
             String xml = XmlMessageBuilder.buildFindMatchRequest(username);
             System.out.println("🔼 Enviar findMatch para o servidor:\n \t" + xml);
             out.writeObject(xml);
-            receiveResponse();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,7 +81,6 @@ public class ClientCommunicationHandler {
             String xml = XmlMessageBuilder.buildCancelMatchRequest(username);
             System.out.println("🔼 Enviar cancelMatch para o servidor:\n \t" + xml);
             out.writeObject(xml);
-            receiveResponse();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,14 +97,6 @@ public class ClientCommunicationHandler {
     }
 
 
-    private void receiveResponse() {
-        try {
-            String xml = (String) in.readObject();
-            System.out.println("🔽 Recebido:\n \t" + xml);
-            Document doc = XmlMessageReader.parseXml(xml);
-            messageHandler.handle(doc);
-        } catch (Exception e) {
-            System.err.println("❌ Erro ao ler resposta: " + e.getMessage());
-        }
-    }
+    // O método receiveResponse pode ser removido ou mantido apenas para operações síncronas específicas,
+    // mas a partir de agora a receção de mensagens será feita pelo ServerListener.
 }
