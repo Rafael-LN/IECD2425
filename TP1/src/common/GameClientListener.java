@@ -7,6 +7,9 @@ public interface GameClientListener {
     void onRegisterSuccess(String username);
     void onRegisterError(String msg);
 
+    void onLogoutSuccess();
+    void onLogoutError(String msg);
+
     // Futuro: outros eventos
     void onGameStart(String you, String opponent, boolean youStart);
     void onMove(int row, int col, String who);

@@ -30,7 +30,7 @@ public class ClientCommunicationHandler {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
            
             System.out.println("✅ Ligado ao servidor.");
-            // Iniciar thread dedicada à escuta de mensagens do servidor
+
             new ServerListener(in, messageHandler).start();
         } catch (IOException e) {
             System.err.println("❌ Falha na ligação: " + e.getMessage());
@@ -69,6 +69,12 @@ public class ClientCommunicationHandler {
 
     public void sendMove(String username, int row, int col) {
         String xml = XmlMessageBuilder.buildMoveRequest(username, row, col);
+        out.println(xml);
+    }
+
+    public void sendLogout(String username) {
+        String xml = common.XmlMessageBuilder.buildLogoutRequest(username);
+        System.out.println("🔼 Enviar logout para o servidor:\n\t" + xml);
         out.println(xml);
     }
 

@@ -52,6 +52,10 @@ public class GoBangClient {
         communication.sendCancelMatch(username);
     }
 
+    public void logout(String username) {
+        communication.sendLogout(username);
+    }
+
     public UserProfileData getProfile() {
         return session.getProfile();
     }
@@ -66,7 +70,7 @@ public class GoBangClient {
 
     public static void main(String[] args) {
         String ip = args.length > 0 ? args[0] : "127.0.0.1";
-        int port = args.length > 1 ? Integer.parseInt(args[1]) : 8080;
+        int port = args.length > 1 ? Integer.parseInt(args[1]) : 8082;
 
         GoBangClient client = new GoBangClient(ip, port);
         client.start();

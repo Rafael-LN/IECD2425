@@ -73,6 +73,10 @@ public class MainWindow extends JFrame implements GameClientListener {
 
             case "move" -> client.sendMove(campos);
 
+            case "logout" -> client.logout(
+                    campos.get("username")
+            );
+
         }
     }
 
@@ -155,6 +159,17 @@ public class MainWindow extends JFrame implements GameClientListener {
     @Override
     public void onRegisterError(String msg) {
         showError("Registo falhou", msg);
+    }
+
+    @Override
+    public void onLogoutSuccess(){
+        showInfo("Logout completo", "Utilizador desconectado com sucesso.");
+        changePanel(PanelType.AUTHENTICATION);
+    }
+
+    @Override
+    public void onLogoutError(String msg) {
+        showError("Logout falhou", msg);
     }
 
     @Override

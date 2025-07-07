@@ -47,6 +47,12 @@ public class ClientMessageHandler {
                             gui.onRegisterSuccess(session.getProfile().username());
                         }
 
+                        case "logout" -> {
+                            System.out.println("✅ Logout realizado com sucesso.");
+                            session.logout();
+                            gui.onLogoutSuccess();
+                        }
+
                         case "updateProfile" -> {
                             System.out.println("✅ Foto de perfil atualizada com sucesso.");
                             String updatedPhoto = XmlMessageReader.getTextValue(payload, "photo");
@@ -68,6 +74,7 @@ public class ClientMessageHandler {
                     switch (operation) {
                         case "login" -> gui.onLoginError(msg);
                         case "register" -> gui.onRegisterError(msg);
+                        case "logout" -> gui.onLogoutError(msg);
                         default -> System.out.println("❌ " + msg);
                     }
                 }
@@ -119,6 +126,8 @@ public class ClientMessageHandler {
             return "login";
         } else if (lowerMessage.contains("registo")) {
             return "register";
+        } else if (lowerMessage.contains("logout")) {
+            return "logout";
         }
         return "unknown";
     }
