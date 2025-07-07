@@ -44,11 +44,8 @@ public class Lobby extends JPanel {
             searchButton.setVisible(false);
             cancelButton.setVisible(true);
 
-            // Enviar pedido numa thread separada
-            new Thread(() -> {
-                Map<String, String> dados = Map.of("username", username);
-                gui.sendRequest("findMatch", dados);
-            }).start();
+            Map<String, String> dados = Map.of("username", username);
+            gui.sendRequest("findMatch", dados);
         });
         add(searchButton, gbc);
 
