@@ -8,6 +8,8 @@ import gui.enums.PanelType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Map;
 
 import static javax.swing.JOptionPane.*;
@@ -35,6 +37,15 @@ public class MainWindow extends JFrame implements GameClientListener {
 
         setContentPane(cardPanel);
         changePanel(PanelType.AUTHENTICATION);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (client.getProfile() != null && client.getProfile().username() != null) {
+                    client.logout(client.getProfile().username());
+                }
+            }
+        });
     }
 
     public void changePanel(PanelType pt) {
