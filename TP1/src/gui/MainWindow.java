@@ -211,7 +211,15 @@ public class MainWindow extends JFrame implements GameClientListener {
             msg.append(message);
         }
         JOptionPane.showMessageDialog(this, msg.toString(), titulo, JOptionPane.INFORMATION_MESSAGE);
+
         // Volta ao lobby após o fim do jogo
-        changePanel(gui.enums.PanelType.LOBBY);
+        SwingUtilities.invokeLater(() -> {
+            for (Component comp : cardPanel.getComponents()) {
+                if (comp instanceof Lobby lobby) {
+                    lobby.resetMatchmakingUI();
+                }
+            }
+            changePanel(gui.enums.PanelType.LOBBY);
+        });
     }
 }
