@@ -1,6 +1,13 @@
 package server.database;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDatabase implements Serializable {
@@ -10,7 +17,7 @@ public class UserDatabase implements Serializable {
     private ConcurrentHashMap<String, PlayerRecord> users;
 
     // Mapa para guardar sessões ativas (utilizadores autenticados)
-    private final ConcurrentHashMap<String, Boolean> activeSessions = new ConcurrentHashMap<>();
+    private final Set<String> activeSessions = ConcurrentHashMap.newKeySet();
 
     public UserDatabase() {
         users = loadFromFile();
@@ -26,12 +33,12 @@ public class UserDatabase implements Serializable {
         return true;
     }
 
-    // Garante que o login é atómico e impede logins concorrentes com o mesmo utilizador
+    // Garante que o ‘login’ é atómico e impede ‘logins’ concorrentes com o mesmo utilizador
     public synchronized boolean login(String username, String password) {
         PlayerRecord player = users.get(username);
         if (player != null && player.password().equals(password)) {
-            if (activeSessions.getOrDefault(username, false)) return false; // Já autenticado
-            activeSessions.put(username, true);
+            if (activeSessions.contains(username)) return false; // Já autenticado
+            activeSessions.add(username);
             return true;
         }
         return false;
@@ -39,7 +46,7 @@ public class UserDatabase implements Serializable {
 
 
     public synchronized boolean logout(String username) {
-        return activeSessions.remove(username) != null;
+        return activeSessions.remove(username);
     }
 
     private void saveToFile() {
