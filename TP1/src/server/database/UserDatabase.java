@@ -1,6 +1,13 @@
 package server.database;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDatabase implements Serializable {
@@ -8,6 +15,9 @@ public class UserDatabase implements Serializable {
     private static final String FILE_PATH = "TP1/data/users.ser";
 
     private ConcurrentHashMap<String, PlayerRecord> users;
+
+    // Mapa para guardar sessões ativas (utilizadores autenticados)
+    private final Set<String> activeSessions = ConcurrentHashMap.newKeySet();
 
     public UserDatabase() {
         users = loadFromFile();
@@ -23,13 +33,20 @@ public class UserDatabase implements Serializable {
         return true;
     }
 
-    public boolean login(String username, String password) {
+    // Garante que o ‘login’ é atómico e impede ‘logins’ concorrentes com o mesmo utilizador
+    public synchronized boolean login(String username, String password) {
         PlayerRecord player = users.get(username);
-        return player != null && player.password().equals(password);
+        if (player != null && player.password().equals(password)) {
+            if (activeSessions.contains(username)) return false; // Já autenticado
+            activeSessions.add(username);
+            return true;
+        }
+        return false;
     }
 
-    public boolean logout(String username) {
-        return users.containsKey(username);
+
+    public synchronized boolean logout(String username) {
+        return activeSessions.remove(username);
     }
 
     private void saveToFile() {

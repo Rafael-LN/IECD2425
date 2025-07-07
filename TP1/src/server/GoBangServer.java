@@ -4,6 +4,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import server.database.UserDatabase;
 
 public class GoBangServer {
 
@@ -11,6 +12,7 @@ public class GoBangServer {
 
     private final int port;
     private ServerSocket serverSocket;
+    private final UserDatabase userDb = new UserDatabase();
 
     public GoBangServer() {
         this(DEFAULT_PORT);
@@ -25,7 +27,7 @@ public class GoBangServer {
         System.out.println("Servidor a escutar no porto " + port + "...");
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            new ClientConnection(clientSocket).start();
+            new ClientConnection(clientSocket, userDb).start();
         }
     }
 }
