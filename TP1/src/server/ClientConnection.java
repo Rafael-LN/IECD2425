@@ -1,5 +1,6 @@
 package server;
 
+import server.database.UserDatabase;
 import server.handler.ClientMessageProcessor;
 
 import java.io.*;
@@ -11,15 +12,15 @@ public class ClientConnection extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private String username;
+    private final UserDatabase userDb;
 
-    public ClientConnection(Socket socket) {
+    public ClientConnection(Socket socket, UserDatabase userDb) {
+        this.socket = socket;
+        this.userDb = userDb;
         try {
-            this.socket = socket;
             out = new PrintWriter(this.socket.getOutputStream(), true);
-
             in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("❌ Erro ao iniciar ligação: " + e.getMessage());
         }
     }
@@ -50,7 +51,7 @@ public class ClientConnection extends Thread {
     @Override
     public void run() {
         try {
-            ClientMessageProcessor processor = new ClientMessageProcessor(this, in);
+            ClientMessageProcessor processor = new ClientMessageProcessor(this, in, userDb);
             processor.start();
         } catch (Exception e) {
             System.err.println("❌ Ligacão terminada para " + username + ": " + e.getMessage());

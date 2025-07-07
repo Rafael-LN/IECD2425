@@ -9,6 +9,9 @@ public class UserDatabase implements Serializable {
 
     private ConcurrentHashMap<String, PlayerRecord> users;
 
+    // Mapa para guardar sessões ativas (utilizadores autenticados)
+    private final ConcurrentHashMap<String, Boolean> activeSessions = new ConcurrentHashMap<>();
+
     public UserDatabase() {
         users = loadFromFile();
         if (users == null) {
@@ -23,13 +26,20 @@ public class UserDatabase implements Serializable {
         return true;
     }
 
-    public boolean login(String username, String password) {
+    // Garante que o login é atómico e impede logins concorrentes com o mesmo utilizador
+    public synchronized boolean login(String username, String password) {
         PlayerRecord player = users.get(username);
-        return player != null && player.password().equals(password);
+        if (player != null && player.password().equals(password)) {
+            if (activeSessions.getOrDefault(username, false)) return false; // Já autenticado
+            activeSessions.put(username, true);
+            return true;
+        }
+        return false;
     }
 
-    public boolean logout(String username) {
-        return users.containsKey(username);
+
+    public synchronized boolean logout(String username) {
+        return activeSessions.remove(username) != null;
     }
 
     private void saveToFile() {

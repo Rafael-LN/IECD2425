@@ -145,7 +145,9 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onLoginError(String msg) {
-        showError("Login falhou", msg);
+        SwingUtilities.invokeLater(() ->
+            JOptionPane.showMessageDialog(this, msg, "Erro de Login", JOptionPane.ERROR_MESSAGE)
+        );
     }
 
     @Override

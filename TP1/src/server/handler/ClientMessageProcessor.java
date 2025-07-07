@@ -14,11 +14,12 @@ public class ClientMessageProcessor {
 
     private final ClientConnection client;
     private final BufferedReader in;
-    private final UserDatabase userDb = new UserDatabase();
+    private final UserDatabase userDb;
 
-    public ClientMessageProcessor(ClientConnection client, BufferedReader in) {
+    public ClientMessageProcessor(ClientConnection client, BufferedReader in, UserDatabase userDb) {
         this.client = client;
         this.in = in;
+        this.userDb = userDb;
     }
 
     public void start() {
@@ -95,7 +96,7 @@ public class ClientMessageProcessor {
         } else {
             client.send(XmlMessageBuilder.buildResponse(
                 "error",
-                "Credenciais inválidas.",
+                "Credenciais inválidas ou utilizador já tem sessão iniciada noutro cliente.",
                 "login"
             ));
         }
