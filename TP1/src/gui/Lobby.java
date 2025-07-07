@@ -82,4 +82,15 @@ public class Lobby extends JPanel {
         });
         add(logoutButton, gbc);
     }
+
+    public void resetMatchmakingUI() {
+        if (searchButton != null) searchButton.setVisible(true);
+        if (cancelButton != null) cancelButton.setVisible(false);
+        // Procura a label de pesquisa e limpa o texto
+        for (Component comp : getComponents()) {
+            if (comp instanceof JLabel label && label.getText().contains("Searching for a match")) {
+                label.setText("");
+            }
+        }
+    }
 }

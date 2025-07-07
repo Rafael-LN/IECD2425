@@ -8,6 +8,8 @@ import gui.enums.PanelType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Map;
 
 import static javax.swing.JOptionPane.*;
@@ -35,6 +37,15 @@ public class MainWindow extends JFrame implements GameClientListener {
 
         setContentPane(cardPanel);
         changePanel(PanelType.AUTHENTICATION);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (client.getProfile() != null && client.getProfile().username() != null) {
+                    client.logout(client.getProfile().username());
+                }
+            }
+        });
     }
 
     public void changePanel(PanelType pt) {
@@ -211,7 +222,15 @@ public class MainWindow extends JFrame implements GameClientListener {
             msg.append(message);
         }
         JOptionPane.showMessageDialog(this, msg.toString(), titulo, JOptionPane.INFORMATION_MESSAGE);
+
         // Volta ao lobby após o fim do jogo
-        changePanel(gui.enums.PanelType.LOBBY);
+        SwingUtilities.invokeLater(() -> {
+            for (Component comp : cardPanel.getComponents()) {
+                if (comp instanceof Lobby lobby) {
+                    lobby.resetMatchmakingUI();
+                }
+            }
+            changePanel(gui.enums.PanelType.LOBBY);
+        });
     }
 }
