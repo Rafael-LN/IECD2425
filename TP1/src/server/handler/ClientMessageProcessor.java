@@ -58,6 +58,7 @@ public class ClientMessageProcessor {
                 case "updateProfileRequest" -> handleUpdateProfile(payload);
                 case "findMatch" -> handleFindMatch(payload);
                 case "move" -> handleMove(payload);
+                case "logoutRequest" -> handleLogout(payload);
                 case null -> System.err.println("Erro no tipo de mensagem recebida");
                 default -> System.err.println("Tipo de mensagem desconhecido: " + type);
             }
@@ -98,6 +99,17 @@ public class ClientMessageProcessor {
                 "login"
             ));
         }
+    }
+
+    private void handleLogout(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        boolean success = userDb.logout(username);
+        String response = XmlMessageBuilder.buildResponse(
+                success ? "success" : "error",
+                success ? "Logout efetuado com sucesso." : "Erro ao efetuar logout.",
+                "logout"
+        );
+        client.send(response);
     }
 
     private void handleRegister(Element payload) {

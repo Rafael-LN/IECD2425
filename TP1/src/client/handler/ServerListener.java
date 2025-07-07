@@ -16,7 +16,6 @@ public class ServerListener extends Thread {
     public ServerListener(BufferedReader in, ClientMessageHandler handler) {
         this.in = in;
         this.messageHandler = handler;
-        setDaemon(true); // Termina quando a aplicação termina
     }
 
     @Override

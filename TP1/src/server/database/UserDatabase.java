@@ -28,6 +28,10 @@ public class UserDatabase implements Serializable {
         return player != null && player.password().equals(password);
     }
 
+    public boolean logout(String username) {
+        return users.containsKey(username);
+    }
+
     private void saveToFile() {
         try {
             File file = new File(FILE_PATH);

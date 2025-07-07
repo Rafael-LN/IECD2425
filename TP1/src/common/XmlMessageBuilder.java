@@ -101,5 +101,11 @@ public class XmlMessageBuilder {
         content += "</gameEnd>";
         return wrapWithMessage(content);
     }
-}
 
+    public static String buildLogoutRequest(String username) {
+        String content = "<logoutRequest>" +
+                "<username>" + username + "</username>" +
+                "</logoutRequest>";
+        return wrapWithMessage(content);
+    }
+}

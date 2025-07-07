@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class GoBangServer {
 
-    public static final int DEFAULT_PORT = 8080;
+    public static final int DEFAULT_PORT = 8082;
 
     private final int port;
     private ServerSocket serverSocket;

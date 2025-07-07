@@ -82,7 +82,6 @@ public class Lobby extends JPanel {
         gbc.gridy++;
         JButton logoutButton = GuiUtils.createButton("Logout", new Color(240, 128, 128), _ -> {
             gui.sendRequest("logout", Map.of("username", username));
-            gui.changePanel(PanelType.AUTHENTICATION);
         });
         add(logoutButton, gbc);
     }
