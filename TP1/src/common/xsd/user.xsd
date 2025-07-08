@@ -1,0 +1,25 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="searchUsersRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="searchTerm" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="searchUsersResponseArray">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="username" type="xs:string"/>
+                            <xs:element name="nationality" type="xs:string"/>
+                            <xs:element name="isLoggedIn" type="xs:boolean"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

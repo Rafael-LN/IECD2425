@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -121,5 +122,12 @@ public class UserDatabase implements Serializable {
      */
     public synchronized Collection<PlayerRecord> getAllPlayers() {
         return users.values();
+    }
+
+    /**
+     * Devolve uma lista dos usernames atualmente com sessão ativa.
+     */
+    public synchronized List<String> getActiveSessions() {
+        return new ArrayList<>(activeSessions);
     }
 }

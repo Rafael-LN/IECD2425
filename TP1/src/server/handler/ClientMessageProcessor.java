@@ -67,6 +67,7 @@ public class ClientMessageProcessor {
                 case "getProfileRequest" -> handleGetProfile(payload);
                 case "quitMatch" -> handleQuitMatch(payload);
                 case "getRankingRequest" -> handleGetRanking();
+                case "searchUsersRequest" -> handleSearchUsers(payload);
                 case null -> System.err.println("Erro no tipo de mensagem recebida");
                 default -> System.err.println("Tipo de mensagem desconhecido: " + type);
             }
@@ -286,6 +287,27 @@ public class ClientMessageProcessor {
         List<PlayerRecord> players = new ArrayList<>(userDb.getAllPlayers());
 
         String response = XmlMessageBuilder.buildRankingResponseArray(players);
+        client.send(response);
+    }
+
+    private void handleSearchUsers(Element payload) {
+        String searchTerm = XmlMessageReader.getTextValue(payload, "searchTerm");
+        if (searchTerm == null) {
+            client.send(XmlMessageBuilder.buildResponse("error", "Search term missing.", "searchUsers"));
+            return;
+        }
+
+        List<server.database.PlayerRecord> encontrados = new ArrayList<>();
+        int maxResults = 10;
+        for (server.database.PlayerRecord player : userDb.getAllPlayers()) {
+            if (player.username().toLowerCase().contains(searchTerm.toLowerCase())) {
+                encontrados.add(player);
+                if (encontrados.size() >= maxResults) break;
+            }
+        }
+
+        List<String> onlineUsers = userDb.getActiveSessions();
+        String response = XmlMessageBuilder.buildSearchUsersResponseArray(encontrados, onlineUsers);
         client.send(response);
     }
 }

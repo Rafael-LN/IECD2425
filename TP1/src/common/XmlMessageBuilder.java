@@ -1,5 +1,7 @@
 package common;
 
+import server.database.PlayerRecord;
+
 import java.util.List;
 
 public class XmlMessageBuilder {
@@ -157,5 +159,21 @@ public class XmlMessageBuilder {
         }
         sb.append("</responseArray>");
         return sb.toString();
+    }
+
+
+    public static String buildSearchUsersResponseArray(List<PlayerRecord> users, List<String> onlineUsers) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<searchUsersResponseArray>");
+        for (server.database.PlayerRecord user : users) {
+            boolean isLoggedIn = onlineUsers.contains(user.username());
+            sb.append("<user>")
+                .append("<username>").append(user.username()).append("</username>")
+                .append("<nationality>").append(user.nationality()).append("</nationality>")
+                .append("<isLoggedIn>").append(isLoggedIn).append("</isLoggedIn>")
+                .append("</user>");
+        }
+        sb.append("</searchUsersResponseArray>");
+        return wrapWithMessage(sb.toString());
     }
 }

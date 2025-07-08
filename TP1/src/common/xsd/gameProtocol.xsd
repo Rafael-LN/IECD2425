@@ -2,7 +2,7 @@
 
     <xs:include schemaLocation="auth.xsd"/>
     <xs:include schemaLocation="game.xsd"/>
-    <xs:include schemaLocation="player.xsd"/>
+    <xs:include schemaLocation="user.xsd"/>
     <xs:include schemaLocation="profile.xsd"/>
     <xs:include schemaLocation="findMatch.xsd"/>
     <xs:include schemaLocation="cancelMatch.xsd"/>
@@ -18,7 +18,8 @@
                 <xs:element ref="move"/>
                 <xs:element ref="gameStart"/>
                 <xs:element ref="quitMatch"/>
-                <xs:element ref="player"/>
+                <xs:element ref="searchUsersRequest"/>
+                <xs:element ref="searchUsersResponseArray"/>
                 <xs:element ref="response"/>
                 <xs:element ref="responseArray"/>
                 <xs:element ref="updateProfileRequest"/>
@@ -27,6 +28,7 @@
                 <xs:element ref="findMatch"/>
                 <xs:element ref="cancelMatch"/>
                 <xs:element name="getRankingRequest" type="xs:string"/>
+
             </xs:choice>
         </xs:complexType>
     </xs:element>
