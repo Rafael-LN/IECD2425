@@ -21,23 +21,6 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="response">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="status" type="xs:string"/>
-                <xs:element name="message" type="xs:string"/>
-                <xs:element name="operation" type="xs:string"/>
-                <xs:element name="username" type="xs:string" minOccurs="0"/>
-                <xs:element name="photo" type="xs:string" minOccurs="0"/>
-                <xs:element name="age" type="xs:int" minOccurs="0"/>
-                <xs:element name="nationality" type="xs:string" minOccurs="0"/>
-                <xs:element name="wins" type="xs:int" minOccurs="0"/>
-                <xs:element name="losses" type="xs:int" minOccurs="0"/>
-                <xs:element name="timePlayed" type="xs:long" minOccurs="0"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="logoutRequest">
         <xs:complexType>
             <xs:sequence>

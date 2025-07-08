@@ -64,16 +64,13 @@ public class Lobby extends JPanel {
 
         add(searchButton, gbc);
 
-        // Botão "Edit Profile"
+        // Botão "Ver/Editar Perfil"
         gbc.gridy++;
-        JButton editProfileButton = GuiUtils.createButton("Edit Profile", new Color(173, 216, 230), _ -> {
-            UserProfileData profile = gui.getLoggedUserProfile();
-            ViewProfilePanel viewProfilePanel = new ViewProfilePanel(gui, profile);
-            gui.addPanel(viewProfilePanel, PanelType.VIEW_PROFILE);
-            gui.changePanel(PanelType.VIEW_PROFILE);
-
+        JButton profileButton = GuiUtils.createButton("Ver/Editar Perfil", new Color(144, 238, 144), _ -> {
+            Map<String, String> dados = Map.of("username", username);
+            gui.sendRequest("requestProfile", dados);
         });
-        add(editProfileButton, gbc);
+        add(profileButton, gbc);
 
         // Botão "Logout"
         gbc.gridy++;

@@ -1,0 +1,21 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="gamesHistory.xsd"/>
+
+    <xs:element name="response">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status" type="xs:string"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="operation" type="xs:string"/>
+                <xs:element name="username" type="xs:string" minOccurs="0"/>
+                <xs:element name="photo" type="xs:string" minOccurs="0"/>
+                <xs:element name="age" type="xs:int" minOccurs="0"/>
+                <xs:element name="nationality" type="xs:string" minOccurs="0"/>
+                <xs:element name="wins" type="xs:int" minOccurs="0"/>
+                <xs:element name="losses" type="xs:int" minOccurs="0"/>
+                <xs:element name="timePlayed" type="xs:long" minOccurs="0"/>
+                <xs:element name="gamesHistory" minOccurs="0" type="gamesHistoryType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

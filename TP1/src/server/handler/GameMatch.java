@@ -10,13 +10,14 @@ public class GameMatch {
     private final ClientConnection player2;
     private final CellState[][] board;
     private ClientConnection currentTurn;
+    private final long startTimeMillis;
 
     public GameMatch(ClientConnection p1, ClientConnection p2) {
         this.player1 = p1;
         this.player2 = p2;
         this.currentTurn = p1;
         this.board = new CellState[15][15];
-
+        this.startTimeMillis = System.currentTimeMillis();
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 board[i][j] = CellState.EMPTY;
@@ -117,5 +118,13 @@ public class GameMatch {
 
     public ClientConnection getPlayer2() {
         return player2;
+    }
+
+    public long getDurationMillis() {
+        return System.currentTimeMillis() - startTimeMillis;
+    }
+
+    public long getStartTimeMillis() {
+        return startTimeMillis;
     }
 }
