@@ -17,6 +17,7 @@
                 <xs:element ref="logoutRequest"/>
                 <xs:element ref="move"/>
                 <xs:element ref="gameStart"/>
+                <xs:element ref="quitMatch"/>
                 <xs:element ref="player"/>
                 <xs:element ref="response"/>
                 <xs:element ref="updateProfileRequest"/>

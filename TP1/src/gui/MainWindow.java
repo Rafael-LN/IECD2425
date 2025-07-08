@@ -77,6 +77,10 @@ public class MainWindow extends JFrame implements GameClientListener {
                     campos.get("username")
             );
 
+            case "quitMatch" -> client.quitMatch(
+                    campos.get("username")
+            );
+
             case "updateProfile" -> client.updateProfile(
                     campos.get("username"),
                     campos.get("photo")
@@ -95,11 +99,6 @@ public class MainWindow extends JFrame implements GameClientListener {
         }
     }
 
-    public void addPanel(JPanel panel, PanelType pt) {
-        cardPanel.add(panel, pt.name());
-    }
-
-
     public void showError(String title, String message) {
         SwingUtilities.invokeLater(() ->
                 JOptionPane.showMessageDialog(this, message, title, ERROR_MESSAGE)
@@ -110,38 +109,6 @@ public class MainWindow extends JFrame implements GameClientListener {
         SwingUtilities.invokeLater(() ->
                 JOptionPane.showMessageDialog(this, message, title, INFORMATION_MESSAGE)
         );
-    }
-
-    public String getLoggedUsername() {
-        return client.getProfile().username();
-    }
-
-    public String getLoggedUserPhoto() {
-        return client.getProfile().photoBase64();
-    }
-
-    public int getLoggedUserAge() {
-        return client.getProfile().age();
-    }
-
-    public String getLoggedUserNationality() {
-        return client.getProfile().nationality();
-    }
-
-    public int getLoggedUserWins() {
-        return client.getProfile().wins();
-    }
-
-    public int getLoggedUserLosses() {
-        return client.getProfile().losses();
-    }
-
-    public long getLoggedUserTimePlayed() {
-        return client.getProfile().timePlayed();
-    }
-
-    public UserProfileData getLoggedUserProfile() {
-        return client.getProfile();
     }
 
     @Override
@@ -210,21 +177,21 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onGameEnd(String winner, String reason, String message) {
-
-        String titulo = "Fim de Jogo";
+        String title = "Game Over";
         StringBuilder msg = new StringBuilder();
-        if (reason != null) {
-            msg.append("Resultado: ").append(reason).append("\n");
-        }
-        if (winner != null && !winner.isEmpty()) {
-            msg.append("Vencedor: ").append(winner).append("\n");
-        }
-        if (message != null) {
+        if (message != null && !message.isBlank()) {
             msg.append(message);
+        } else {
+            // Mensagem fallback se não vier nada do servidor
+            if (reason != null) {
+                msg.append("Result: ").append(reason).append("\n");
+            }
+            if (winner != null && !winner.isEmpty()) {
+                msg.append("Winner: ").append(winner).append("\n");
+            }
         }
-        JOptionPane.showMessageDialog(this, msg.toString(), titulo, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg.toString(), title, JOptionPane.INFORMATION_MESSAGE);
 
-        // Volta ao lobby após o fim do jogo
         SwingUtilities.invokeLater(() -> {
             for (Component comp : cardPanel.getComponents()) {
                 if (comp instanceof Lobby lobby) {

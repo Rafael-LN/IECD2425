@@ -18,10 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * User profile panel with summary, photo and game history.
- * Designed for clarity, scalability and visual consistency with the app.
- */
 public class ViewProfilePanel extends JPanel {
 
     private final MainWindow gui;
@@ -66,7 +62,7 @@ public class ViewProfilePanel extends JPanel {
         add(createButtonsPanel(), BorderLayout.SOUTH);
     }
 
-    /** Panel with user summary info */
+
     private JPanel createUserInfoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -100,7 +96,6 @@ public class ViewProfilePanel extends JPanel {
         gbc.gridy++;
     }
 
-    /** Panel with user profile photo (with default fallback) */
     private JPanel createPhotoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -121,8 +116,6 @@ public class ViewProfilePanel extends JPanel {
         return panel;
     }
 
-    /** Sets the profile photo from Base64 or uses a predefined image.
-     */
     private void setProfilePhoto(String base64) {
         if (base64 != null && !base64.isEmpty()) {
             try {
@@ -135,7 +128,6 @@ public class ViewProfilePanel extends JPanel {
         }
     }
 
-    /** Panel with game history table */
     private JPanel createHistoryPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
@@ -192,14 +184,12 @@ public class ViewProfilePanel extends JPanel {
         return panel;
     }
 
-    /** Formats LocalDateTime as 'dd/MM/yyyy HH:mm' */
     private String formatDateTime(java.time.LocalDateTime dateTime) {
         if (dateTime == null) return "-";
         java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return dateTime.format(formatter);
     }
 
-    /** Formats duration as 'Xm Ys' */
     private String formatDuration(long millis) {
         long totalSeconds = millis / 1000;
         long minutes = totalSeconds / 60;
@@ -207,7 +197,6 @@ public class ViewProfilePanel extends JPanel {
         return minutes + "m " + seconds + "s";
     }
 
-    /** Panel with action buttons (choose/remove photo, save, back) */
     private JPanel createButtonsPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
         panel.setOpaque(false);
@@ -243,7 +232,6 @@ public class ViewProfilePanel extends JPanel {
         return panel;
     }
 
-    /** Opens file chooser and previews the selected photo */
     private void chooseNewPhoto(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
@@ -262,7 +250,6 @@ public class ViewProfilePanel extends JPanel {
         }
     }
 
-    /** Sends profile update if new photo is selected */
     private void saveChanges() {
         if (newPhotoData == null) {
             JOptionPane.showMessageDialog(this, "Please choose a new photo.", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -276,7 +263,6 @@ public class ViewProfilePanel extends JPanel {
         gui.changePanel(PanelType.LOBBY);
     }
 
-    /** Formats time played as 'Xh Ymin' */
     private String formatTimePlayed(long milliseconds) {
         long minutes = (milliseconds / 1000) / 60;
         long hours = minutes / 60;

@@ -45,7 +45,10 @@ public class GameBoardPanel extends JPanel implements ClickHandler {
 
         JButton quit = new JButton("Quit Game");
         quit.setBackground(new Color(240, 128, 128));
-        quit.addActionListener(e -> gui.changePanel(PanelType.LOBBY));
+        quit.addActionListener(_ -> {
+            gui.sendRequest("quitMatch", Map.of("username", player));
+            gui.changePanel(PanelType.LOBBY);
+        });
         JPanel bottom = new JPanel();
         bottom.setOpaque(false);
         bottom.add(quit);

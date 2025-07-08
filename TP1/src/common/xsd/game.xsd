@@ -33,4 +33,12 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="quitMatch">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="username" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>
