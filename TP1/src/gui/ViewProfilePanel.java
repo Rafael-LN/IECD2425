@@ -7,6 +7,7 @@ import gui.utils.GuiUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -17,12 +18,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * User profile panel with summary, photo and game history.
+ * Designed for clarity, scalability and visual consistency with the app.
+ */
 public class ViewProfilePanel extends JPanel {
 
     private final MainWindow gui;
     private final UserProfileData profile;
     private JLabel photoPreviewLabel;
     private byte[] newPhotoData;
+    private JButton saveButton;
 
     public ViewProfilePanel(MainWindow gui, UserProfileData profile) {
         this.gui = gui;
@@ -30,32 +36,44 @@ public class ViewProfilePanel extends JPanel {
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(255, 250, 240));
+        setPreferredSize(new Dimension(950, 500));
 
-        // Título
-        JLabel titleLabel = GuiUtils.createLabel("Your Profile", SwingConstants.CENTER, new Font("Roboto", Font.BOLD, 20), null);
+        // Title
+        JLabel titleLabel = GuiUtils.createLabel("Your Profile", SwingConstants.CENTER, new Font("Roboto", Font.BOLD, 22), null);
         add(titleLabel, BorderLayout.NORTH);
 
-        // Corpo: informação + foto + histórico
-        JPanel centerPanel = new JPanel(new GridLayout(1, 3, 20, 10));
+        // Main content – user info, photo, history
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.X_AXIS));
         centerPanel.setOpaque(false);
 
-        centerPanel.add(createUserInfoPanel());
-        centerPanel.add(createPhotoPanel());
-        centerPanel.add(createHistoryPanel());
+        JPanel userInfoPanel = createUserInfoPanel();
+        JPanel photoPanel = createPhotoPanel();
+        JPanel historyPanel = createHistoryPanel();
+
+        // Add space between blocks for better visual separation
+        centerPanel.add(Box.createHorizontalStrut(24));
+        centerPanel.add(userInfoPanel);
+        centerPanel.add(Box.createHorizontalStrut(24));
+        centerPanel.add(photoPanel);
+        centerPanel.add(Box.createHorizontalStrut(24));
+        centerPanel.add(historyPanel);
+        centerPanel.add(Box.createHorizontalStrut(24));
 
         add(centerPanel, BorderLayout.CENTER);
 
-        // Botões
+        // Buttons panel at the bottom
         add(createButtonsPanel(), BorderLayout.SOUTH);
     }
 
+    /** Panel with user summary info */
     private JPanel createUserInfoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 20, 5, 20); // padding (top, left, bottom, right)
-        gbc.anchor = GridBagConstraints.WEST; // alinhar à esquerda
+        gbc.insets = new Insets(6, 16, 6, 16);
+        gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
         gbc.gridy = 0;
 
@@ -72,91 +90,150 @@ public class ViewProfilePanel extends JPanel {
     private void addInfoRow(JPanel panel, GridBagConstraints gbc, String label, String value) {
         JLabel labelComponent = new JLabel(label);
         labelComponent.setFont(new Font("Roboto", Font.BOLD, 14));
-
         JLabel valueComponent = new JLabel(value);
         valueComponent.setFont(new Font("Roboto", Font.PLAIN, 14));
 
         gbc.gridx = 0;
         panel.add(labelComponent, gbc);
-
         gbc.gridx = 1;
         panel.add(valueComponent, gbc);
-
         gbc.gridy++;
     }
 
-
+    /** Panel with user profile photo (with default fallback) */
     private JPanel createPhotoPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         photoPreviewLabel = new JLabel();
         photoPreviewLabel.setHorizontalAlignment(SwingConstants.CENTER);
         photoPreviewLabel.setPreferredSize(new Dimension(200, 250));
-        photoPreviewLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        photoPreviewLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2));
+        setProfilePhoto(profile.photoBase64());
+        panel.add(photoPreviewLabel, gbc);
 
-        if (profile.photoBase64() != null && !profile.photoBase64().isEmpty()) {
-            byte[] photoBytes = Base64.getDecoder().decode(profile.photoBase64());
-            ImageIcon icon = new ImageIcon(photoBytes);
-            Image image = icon.getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH);
-            photoPreviewLabel.setIcon(new ImageIcon(image));
-        }
-
-        panel.add(photoPreviewLabel, BorderLayout.CENTER);
         return panel;
     }
 
+    /** Sets the profile photo from Base64 or uses a predefined image.
+     */
+    private void setProfilePhoto(String base64) {
+        if (base64 != null && !base64.isEmpty()) {
+            try {
+                byte[] photoBytes = Base64.getDecoder().decode(base64);
+                ImageIcon icon = new ImageIcon(photoBytes);
+                Image image = icon.getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH);
+                photoPreviewLabel.setIcon(new ImageIcon(image));
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    /** Panel with game history table */
     private JPanel createHistoryPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
-        JLabel histLabel = GuiUtils.createLabel("Histórico de Jogos", SwingConstants.CENTER, new Font("Roboto", Font.BOLD, 16), null);
+
+        JLabel histLabel = GuiUtils.createLabel("Game History", SwingConstants.CENTER,
+                new Font("Roboto", Font.BOLD, 16), null);
         panel.add(histLabel, BorderLayout.NORTH);
 
         List<GameHistory> history = profile.gamesHistory();
-        if (history == null) {
-            System.out.println("⚠️ [Perfil] Histórico de jogos é null no perfil!");
-        } else {
-            System.out.println("[Perfil] Histórico de jogos: " + history.size() + " registos.");
-            for (GameHistory entry : history) {
-                System.out.println("[Perfil] Jogo: Data/Hora=" + entry.dateTime() + ", Duração=" + entry.duration() + "ms, Adversário=" + entry.opponent() + ", Resultado=" + entry.result());
-            }
-        }
-        String[] columns = {"Data/Hora", "Duração (s)", "Adversário", "Resultado"};
+        String[] columns = {"Date", "Duration", "Opponent", "Result"};
         String[][] data;
         if (history == null || history.isEmpty()) {
-            data = new String[][]{{"Sem jogos registados", "", "", ""}};
+            data = new String[][]{{"No games recorded", "", "", ""}};
         } else {
             data = new String[history.size()][4];
             for (int i = 0; i < history.size(); i++) {
                 GameHistory entry = history.get(i);
-                data[i][0] = entry.dateTime().toString().replace('T', ' ');
-                data[i][1] = String.valueOf(entry.duration() / 1000);
+                data[i][0] = formatDateTime(entry.dateTime());
+                data[i][1] = formatDuration(entry.duration());
                 data[i][2] = entry.opponent();
                 data[i][3] = entry.result();
             }
         }
         JTable table = new JTable(data, columns);
-        table.setFont(new Font("Roboto", Font.PLAIN, 12));
+        table.setFont(new Font("Roboto", Font.PLAIN, 13));
         table.setRowHeight(22);
         table.setEnabled(false);
-        table.getTableHeader().setFont(new Font("Roboto", Font.BOLD, 12));
+        table.getTableHeader().setFont(new Font("Roboto", Font.BOLD, 13));
+        table.setBackground(new Color(255, 250, 240));
+
+        // Centralizar colunas e cabeçalhos
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < columns.length; i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            table.getColumnModel().getColumn(i).setHeaderRenderer(centerRenderer);
+        }
+
+        // Ajustar larguras
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setPreferredWidth(130); // Date
+        table.getColumnModel().getColumn(1).setPreferredWidth(80);  // Duration
+        table.getColumnModel().getColumn(2).setPreferredWidth(120); // Opponent
+        table.getColumnModel().getColumn(3).setPreferredWidth(80);  // Result
+
+        // Tornar a tabela scrollável e bem dimensionada
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(420, 220));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setBackground(new Color(255, 250, 240));
         panel.add(scrollPane, BorderLayout.CENTER);
-        panel.setPreferredSize(new Dimension(550, 350));
+
+        panel.setPreferredSize(new Dimension(430, 260));
         return panel;
     }
 
+    /** Formats LocalDateTime as 'dd/MM/yyyy HH:mm' */
+    private String formatDateTime(java.time.LocalDateTime dateTime) {
+        if (dateTime == null) return "-";
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return dateTime.format(formatter);
+    }
+
+    /** Formats duration as 'Xm Ys' */
+    private String formatDuration(long millis) {
+        long totalSeconds = millis / 1000;
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
+        return minutes + "m " + seconds + "s";
+    }
+
+    /** Panel with action buttons (choose/remove photo, save, back) */
     private JPanel createButtonsPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
         panel.setOpaque(false);
 
         JButton choosePhotoButton = GuiUtils.createButton("Choose New Photo", new Color(100, 149, 237), this::chooseNewPhoto);
+        choosePhotoButton.setToolTipText("Select a new profile photo (jpg/png/gif)");
+
         JButton removePhotoButton = GuiUtils.createButton("Remove Photo", new Color(240, 128, 128), _ -> {
             newPhotoData = null;
-            photoPreviewLabel.setIcon(null);
+            saveButton.setEnabled(true);
         });
-        JButton saveButton = GuiUtils.createButton("Save Changes", new Color(144, 238, 144), _ -> saveChanges());
+        removePhotoButton.setToolTipText("Remove the profile photo and set the default image");
+
+        saveButton = GuiUtils.createButton("Save Changes", new Color(144, 238, 144), _ -> saveChanges());
+        saveButton.setToolTipText("Save the new profile photo");
+        saveButton.setEnabled(false); // Only enable if there are changes
+
         JButton backButton = GuiUtils.createButton("Back to Lobby", new Color(192, 192, 192), _ -> gui.changePanel(PanelType.LOBBY));
+        backButton.setToolTipText("Go back to the main lobby");
+
+        // Consistent font
+        Font btnFont = new Font("Roboto", Font.PLAIN, 14);
+        choosePhotoButton.setFont(btnFont);
+        removePhotoButton.setFont(btnFont);
+        saveButton.setFont(btnFont);
+        backButton.setFont(btnFont);
 
         panel.add(choosePhotoButton);
         panel.add(removePhotoButton);
@@ -166,6 +243,7 @@ public class ViewProfilePanel extends JPanel {
         return panel;
     }
 
+    /** Opens file chooser and previews the selected photo */
     private void chooseNewPhoto(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
@@ -174,32 +252,31 @@ public class ViewProfilePanel extends JPanel {
             try {
                 Path photoPath = fileChooser.getSelectedFile().toPath();
                 newPhotoData = Files.readAllBytes(photoPath);
-
                 ImageIcon icon = new ImageIcon(newPhotoData);
                 Image image = icon.getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH);
                 photoPreviewLabel.setIcon(new ImageIcon(image));
+                saveButton.setEnabled(true); // Enable save button
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Error loading image.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
+    /** Sends profile update if new photo is selected */
     private void saveChanges() {
         if (newPhotoData == null) {
             JOptionPane.showMessageDialog(this, "Please choose a new photo.", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        Map<String, String> campos = new HashMap<>();
-        campos.put("username", profile.username());
-        campos.put("photo", Base64.getEncoder().encodeToString(newPhotoData));
-
-        gui.sendRequest("updateProfile", campos);
-
+        Map<String, String> fields = new HashMap<>();
+        fields.put("username", profile.username());
+        fields.put("photo", Base64.getEncoder().encodeToString(newPhotoData));
+        gui.sendRequest("updateProfile", fields);
         JOptionPane.showMessageDialog(this, "Profile updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
         gui.changePanel(PanelType.LOBBY);
     }
 
+    /** Formats time played as 'Xh Ymin' */
     private String formatTimePlayed(long milliseconds) {
         long minutes = (milliseconds / 1000) / 60;
         long hours = minutes / 60;
