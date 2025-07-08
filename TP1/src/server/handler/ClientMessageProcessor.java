@@ -98,11 +98,11 @@ public class ClientMessageProcessor {
         if (success) {
             client.setUsername(username);
             PlayerRecord player = userDb.getPlayer(username);
-            sendUserProfileResponse("Login efetuado com sucesso.", "login", player);
+            sendUserProfileResponse("Login successful.", "login", player);
         } else {
             client.send(XmlMessageBuilder.buildResponse(
                 "error",
-                "Credenciais inválidas ou utilizador já tem sessão iniciada noutro cliente.",
+                "Invalid credentials or user already logged in on another client.",
                 "login"
             ));
         }
@@ -113,7 +113,7 @@ public class ClientMessageProcessor {
         boolean success = userDb.logout(username);
         String response = XmlMessageBuilder.buildResponse(
                 success ? "success" : "error",
-                success ? "Logout efetuado com sucesso." : "Erro ao efetuar logout.",
+                success ? "Logout successful." : "Logout failed.",
                 "logout"
         );
         client.send(response);
@@ -127,7 +127,7 @@ public class ClientMessageProcessor {
         String photo = XmlMessageReader.getTextValue(payload, "photo");
 
         if (username == null || password == null || ageStr == null || nationality == null || photo == null) {
-            client.send(XmlMessageBuilder.buildResponse("error", "Dados de registo em falta.", "register"));
+            client.send(XmlMessageBuilder.buildResponse("error", "Missing registration data.", "register"));
             return;
         }
 
@@ -135,7 +135,7 @@ public class ClientMessageProcessor {
         try {
             age = Integer.parseInt(ageStr);
         } catch (NumberFormatException e) {
-            client.send(XmlMessageBuilder.buildResponse("error", "Idade inválida.", "register"));
+            client.send(XmlMessageBuilder.buildResponse("error", "Invalid age.", "register"));
             return;
         }
 
@@ -143,11 +143,11 @@ public class ClientMessageProcessor {
         if (success) {
             client.setUsername(username);
             PlayerRecord player = userDb.getPlayer(username);
-            sendUserProfileResponse("Registo efetuado com sucesso.","register", player);
+            sendUserProfileResponse("Registration successful.","register", player);
         } else {
             client.send(XmlMessageBuilder.buildResponse(
                 "error",
-                "Utilizador já existe.",
+                "User already exists.",
                 "register"
             ));
         }
@@ -160,7 +160,7 @@ public class ClientMessageProcessor {
         boolean success = userDb.updatePhoto(username, photo);
         String response = XmlMessageBuilder.buildResponse(
                 success ? "success" : "error",
-                success ? "Foto atualizada com sucesso." : "Erro ao atualizar foto.",
+                success ? "Profile photo updated successfully." : "Failed to update profile photo.",
                 "updateProfile"
         );
         client.send(response);
@@ -180,7 +180,7 @@ public class ClientMessageProcessor {
         String rowStr = XmlMessageReader.getTextValue(payload, "row");
         String colStr = XmlMessageReader.getTextValue(payload, "col");
         if (rowStr == null || colStr == null) {
-            client.send(XmlMessageBuilder.buildResponse("error", "Coordenadas em falta.", "move"));
+            client.send(XmlMessageBuilder.buildResponse("error", "Missing coordinates.", "move"));
             return;
         }
         int row, col;
@@ -188,7 +188,7 @@ public class ClientMessageProcessor {
             row = Integer.parseInt(rowStr);
             col = Integer.parseInt(colStr);
         } catch (NumberFormatException e) {
-            client.send(XmlMessageBuilder.buildResponse("error", "Coordenadas inválidas.", "move"));
+            client.send(XmlMessageBuilder.buildResponse("error", "Invalid coordinates.", "move"));
             return;
         }
         ActiveGamesManager.processMove(client, row, col);
@@ -257,22 +257,22 @@ public class ClientMessageProcessor {
     private void handleGetProfile(Element payload) {
         String username = XmlMessageReader.getTextValue(payload, "username");
         if (username == null) {
-            client.send(XmlMessageBuilder.buildResponse("error", "Username em falta no pedido de perfil.", "getProfile"));
+            client.send(XmlMessageBuilder.buildResponse("error", "Username missing in profile request.", "getProfile"));
             return;
         }
         PlayerRecord player = userDb.getPlayer(username);
         if (player == null) {
-            client.send(XmlMessageBuilder.buildResponse("error", "Utilizador não encontrado.", "getProfile"));
+            client.send(XmlMessageBuilder.buildResponse("error", "User not found.", "getProfile"));
             return;
         }
-        sendUserProfileResponse("Perfil obtido com sucesso.", "getProfile", player);
+        sendUserProfileResponse("Profile retrieved successfully.", "getProfile", player);
     }
 
     private void handleQuitMatch(Element payload) {
         String username = XmlMessageReader.getTextValue(payload, "username");
         client.setUsername(username);
 
-        String response = XmlMessageBuilder.buildResponse("success", "Pedido de desistência recebido.", "quitMatch");
+        String response = XmlMessageBuilder.buildResponse("success", "Quit request received.", "quitMatch");
         client.send(response);
 
         MatchmakingQueue.removeFromQueue(client);

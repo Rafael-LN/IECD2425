@@ -53,7 +53,6 @@ public class XmlMessageBuilder {
         return wrapWithMessage(content);
     }
 
-    // Serializa o histórico de jogos para XML (String)
     private static String buildGamesHistoryXml(List<GameHistory> gamesHistory) {
         StringBuilder xml = new StringBuilder("<gamesHistory>");
         if (gamesHistory != null) {

@@ -113,7 +113,7 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onLoginSuccess(String username) {
-        showInfo("Login completo", "Utilizador autenticado com sucesso.");
+        showInfo("Login successful", "User authenticated successfully.");
         SwingUtilities.invokeLater(() -> {
             Lobby lobby = new Lobby(this, username);
             cardPanel.add(lobby, PanelType.LOBBY.name());
@@ -125,13 +125,13 @@ public class MainWindow extends JFrame implements GameClientListener {
     @Override
     public void onLoginError(String msg) {
         SwingUtilities.invokeLater(() ->
-            JOptionPane.showMessageDialog(this, msg, "Erro de Login", JOptionPane.ERROR_MESSAGE)
+            JOptionPane.showMessageDialog(this, msg, "Login Error", JOptionPane.ERROR_MESSAGE)
         );
     }
 
     @Override
     public void onRegisterSuccess(String username) {
-        showInfo("Registo completo", "Utilizador registado com sucesso.");
+        showInfo("Registration complete", "User registered successfully.");
         Lobby lobby = new Lobby(this, username);
         cardPanel.add(lobby, PanelType.LOBBY.name());
         changePanel(PanelType.LOBBY);
@@ -139,18 +139,18 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onRegisterError(String msg) {
-        showError("Registo falhou", msg);
+        showError("Registration failed", msg);
     }
 
     @Override
     public void onLogoutSuccess(){
-        showInfo("Logout completo", "Utilizador desconectado com sucesso.");
+        showInfo("Logout complete", "User logged out successfully.");
         changePanel(PanelType.AUTHENTICATION);
     }
 
     @Override
     public void onLogoutError(String msg) {
-        showError("Logout falhou", msg);
+        showError("Logout failed", msg);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onConnectionClosed() {
-        showError("Ligação encerrada", "O servidor fechou a ligação.");
+        showError("Connection closed", "The server closed the connection.");
         dispose();
     }
 

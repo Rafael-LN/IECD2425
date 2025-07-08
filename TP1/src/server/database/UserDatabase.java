@@ -17,7 +17,6 @@ public class UserDatabase implements Serializable {
 
     private ConcurrentHashMap<String, PlayerRecord> users;
 
-    // Mapa para guardar sessões ativas (utilizadores autenticados)
     private final Set<String> activeSessions = ConcurrentHashMap.newKeySet();
 
     public UserDatabase() {

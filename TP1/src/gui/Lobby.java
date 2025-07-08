@@ -1,7 +1,5 @@
 package gui;
 
-import common.UserProfileData;
-import gui.enums.PanelType;
 import gui.utils.GuiUtils;
 
 import javax.swing.*;
@@ -66,7 +64,7 @@ public class Lobby extends JPanel {
 
         // Botão "Ver/Editar Perfil"
         gbc.gridy++;
-        JButton profileButton = GuiUtils.createButton("Ver/Editar Perfil", new Color(144, 238, 144), _ -> {
+        JButton profileButton = GuiUtils.createButton("View/Edit Profile", new Color(144, 238, 144), _ -> {
             Map<String, String> dados = Map.of("username", username);
             gui.sendRequest("requestProfile", dados);
         });
