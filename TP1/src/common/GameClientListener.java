@@ -15,4 +15,5 @@ public interface GameClientListener {
     void onMove(int row, int col, String who);
     void onConnectionClosed();
     void onGameEnd(String winner, String reason, String message);
+    void onProfileView(UserProfileData profile);
 }

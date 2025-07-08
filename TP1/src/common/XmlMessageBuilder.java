@@ -1,5 +1,7 @@
 package common;
 
+import java.util.List;
+
 public class XmlMessageBuilder {
 
     
@@ -34,6 +36,14 @@ public class XmlMessageBuilder {
         return wrapWithMessage(content);
     }
 
+    public static String buildRequestProfile(String username) {
+        String content = "<getProfileRequest>" +
+                "<username>" + username + "</username>" +
+                "</getProfileRequest>";
+        return wrapWithMessage(content);
+    }
+
+
     public static String buildResponse(String status, String message, String operation) {
         String content = "<response>" +
                 "<status>" + status + "</status>" +
@@ -43,20 +53,21 @@ public class XmlMessageBuilder {
         return wrapWithMessage(content);
     }
 
-    public static String buildAuthResponse(String status, String message, String operation, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed) {
-        String content = "<response>" +
-                "<status>" + status + "</status>" +
-                "<message>" + message + "</message>" +
-                "<operation>"+ operation +"</operation>" +
-                "<username>" + username + "</username>" +
-                "<photo>" + (photoBase64 != null ? photoBase64 : "") + "</photo>" +
-                "<age>" + age + "</age>" +
-                "<nationality>" + nationality + "</nationality>" +
-                "<wins>" + wins + "</wins>" +
-                "<losses>" + losses + "</losses>" +
-                "<timePlayed>" + timePlayed + "</timePlayed>" +
-                "</response>";
-        return wrapWithMessage(content);
+    // Serializa o histórico de jogos para XML (String)
+    private static String buildGamesHistoryXml(List<GameHistory> gamesHistory) {
+        String xml = "<gamesHistory>";
+        if (gamesHistory != null) {
+            for (GameHistory entry : gamesHistory) {
+                xml += "<game>"
+                    + "<dateTime>" + entry.dateTime() + "</dateTime>"
+                    + "<duration>" + entry.duration() + "</duration>"
+                    + "<opponent>" + entry.opponent() + "</opponent>"
+                    + "<result>" + entry.result() + "</result>"
+                    + "</game>";
+            }
+        }
+        xml += "</gamesHistory>";
+        return xml;
     }
 
     public static String buildFindMatchRequest(String username) {
@@ -106,6 +117,24 @@ public class XmlMessageBuilder {
         String content = "<logoutRequest>" +
                 "<username>" + username + "</username>" +
                 "</logoutRequest>";
+        return wrapWithMessage(content);
+    }
+
+
+   public static String buildResponse(String status, String message, String operation, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed, List<GameHistory> gamesHistory) {
+        String content = "<response>"
+            + "<status>" + status + "</status>"
+            + "<message>" + message + "</message>"
+            + "<operation>" + operation + "</operation>"
+            + "<username>" + username + "</username>"
+            + "<photo>" + (photoBase64 != null ? photoBase64 : "") + "</photo>"
+            + "<age>" + age + "</age>"
+            + "<nationality>" + nationality + "</nationality>"
+            + "<wins>" + wins + "</wins>"
+            + "<losses>" + losses + "</losses>"
+            + "<timePlayed>" + timePlayed + "</timePlayed>"
+            + buildGamesHistoryXml(gamesHistory)
+            + "</response>";
         return wrapWithMessage(content);
     }
 }

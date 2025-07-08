@@ -54,6 +54,12 @@ public class ClientCommunicationHandler {
         out.println(xml);
     }
 
+    public void sendRequestProfile(String username) {
+        String xml = XmlMessageBuilder.buildRequestProfile(username);
+        System.out.println("🔼 Enviar requestProfile para o servidor:\n \t" + xml);
+        out.println(xml);
+    }
+
 
     public void sendFindMatch(String username) {
         String xml = XmlMessageBuilder.buildFindMatchRequest(username);

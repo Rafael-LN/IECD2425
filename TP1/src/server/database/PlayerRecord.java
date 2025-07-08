@@ -1,6 +1,8 @@
 package server.database;
 
 import java.io.Serializable;
+import java.util.List;
+import common.GameHistory;
 
 public record PlayerRecord(
         String username,
@@ -10,5 +12,6 @@ public record PlayerRecord(
         String photoBase64,
         int wins,
         int losses,
-        long timePlayed
+        long timePlayed,
+        List<GameHistory> gamesHistory
 ) implements Serializable {}

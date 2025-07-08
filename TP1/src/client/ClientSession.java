@@ -34,7 +34,8 @@ public class ClientSession {
                     profile.wins(),
                     profile.losses(),
                     profile.timePlayed(),
-                    newPhotoBase64
+                    newPhotoBase64,
+                    profile.gamesHistory()
             );
         }
     }

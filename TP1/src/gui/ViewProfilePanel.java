@@ -1,6 +1,7 @@
 package gui;
 
 import common.UserProfileData;
+import common.GameHistory;
 import gui.enums.PanelType;
 import gui.utils.GuiUtils;
 
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ViewProfilePanel extends JPanel {
@@ -33,12 +35,13 @@ public class ViewProfilePanel extends JPanel {
         JLabel titleLabel = GuiUtils.createLabel("Your Profile", SwingConstants.CENTER, new Font("Roboto", Font.BOLD, 20), null);
         add(titleLabel, BorderLayout.NORTH);
 
-        // Corpo: informação + foto
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 20, 10));
+        // Corpo: informação + foto + histórico
+        JPanel centerPanel = new JPanel(new GridLayout(1, 3, 20, 10));
         centerPanel.setOpaque(false);
 
         centerPanel.add(createUserInfoPanel());
         centerPanel.add(createPhotoPanel());
+        centerPanel.add(createHistoryPanel());
 
         add(centerPanel, BorderLayout.CENTER);
 
@@ -100,6 +103,46 @@ public class ViewProfilePanel extends JPanel {
         }
 
         panel.add(photoPreviewLabel, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private JPanel createHistoryPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+        JLabel histLabel = GuiUtils.createLabel("Histórico de Jogos", SwingConstants.CENTER, new Font("Roboto", Font.BOLD, 16), null);
+        panel.add(histLabel, BorderLayout.NORTH);
+
+        List<GameHistory> history = profile.gamesHistory();
+        if (history == null) {
+            System.out.println("⚠️ [Perfil] Histórico de jogos é null no perfil!");
+        } else {
+            System.out.println("[Perfil] Histórico de jogos: " + history.size() + " registos.");
+            for (GameHistory entry : history) {
+                System.out.println("[Perfil] Jogo: Data/Hora=" + entry.dateTime() + ", Duração=" + entry.duration() + "ms, Adversário=" + entry.opponent() + ", Resultado=" + entry.result());
+            }
+        }
+        String[] columns = {"Data/Hora", "Duração (s)", "Adversário", "Resultado"};
+        String[][] data;
+        if (history == null || history.isEmpty()) {
+            data = new String[][]{{"Sem jogos registados", "", "", ""}};
+        } else {
+            data = new String[history.size()][4];
+            for (int i = 0; i < history.size(); i++) {
+                GameHistory entry = history.get(i);
+                data[i][0] = entry.dateTime().toString().replace('T', ' ');
+                data[i][1] = String.valueOf(entry.duration() / 1000);
+                data[i][2] = entry.opponent();
+                data[i][3] = entry.result();
+            }
+        }
+        JTable table = new JTable(data, columns);
+        table.setFont(new Font("Roboto", Font.PLAIN, 12));
+        table.setRowHeight(22);
+        table.setEnabled(false);
+        table.getTableHeader().setFont(new Font("Roboto", Font.BOLD, 12));
+        JScrollPane scrollPane = new JScrollPane(table);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.setPreferredSize(new Dimension(550, 350));
         return panel;
     }
 

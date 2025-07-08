@@ -82,6 +82,10 @@ public class MainWindow extends JFrame implements GameClientListener {
                     campos.get("photo")
             );
 
+            case "requestProfile" -> client.requestProfile(
+                    campos.get("username")
+            );
+
             case "move" -> client.sendMove(campos);
 
             case "logout" -> client.logout(
@@ -139,9 +143,6 @@ public class MainWindow extends JFrame implements GameClientListener {
     public UserProfileData getLoggedUserProfile() {
         return client.getProfile();
     }
-
-
-
 
     @Override
     public void onLoginSuccess(String username) {
@@ -209,7 +210,7 @@ public class MainWindow extends JFrame implements GameClientListener {
 
     @Override
     public void onGameEnd(String winner, String reason, String message) {
-        // Mostra um diálogo informativo ao utilizador com o resultado do jogo
+
         String titulo = "Fim de Jogo";
         StringBuilder msg = new StringBuilder();
         if (reason != null) {
@@ -231,6 +232,15 @@ public class MainWindow extends JFrame implements GameClientListener {
                 }
             }
             changePanel(gui.enums.PanelType.LOBBY);
+        });
+    }
+
+    @Override
+    public void onProfileView(UserProfileData profile) {
+        SwingUtilities.invokeLater(() -> {
+            ViewProfilePanel profilePanel = new ViewProfilePanel(this, profile);
+            cardPanel.add(profilePanel, PanelType.VIEW_PROFILE.name());
+            changePanel(PanelType.VIEW_PROFILE);
         });
     }
 }

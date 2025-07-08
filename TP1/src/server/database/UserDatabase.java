@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +29,9 @@ public class UserDatabase implements Serializable {
 
     public synchronized boolean register(String username, String password, int age, String nationality, String photoBase64) {
         if (users.containsKey(username)) return false;
-        users.put(username, new PlayerRecord(username, password, age, nationality, photoBase64, 0, 0, 0));
+        users.put(username, new PlayerRecord(
+            username, password, age, nationality, photoBase64, 0, 0, 0, new ArrayList<>()
+        ));
         saveToFile();
         return true;
     }
@@ -93,7 +96,8 @@ public class UserDatabase implements Serializable {
                 photoBase64,
                 player.wins(),
                 player.losses(),
-                player.timePlayed()
+                player.timePlayed(),
+                player.gamesHistory()
         ));
         saveToFile();
         return true;
@@ -101,5 +105,14 @@ public class UserDatabase implements Serializable {
 
     public synchronized PlayerRecord getPlayer(String username) {
         return users.get(username);
+    }
+
+    /**
+     * Atualiza o registo de um jogador na base de dados e persiste.
+     * @param player Novo PlayerRecord a guardar
+     */
+    public synchronized void updatePlayer(PlayerRecord player) {
+        users.put(player.username(), player);
+        saveToFile();
     }
 }

@@ -1,5 +1,7 @@
 package common;
 
+import java.util.List;
+
 public record UserProfileData(
         String username,
         int age,
@@ -7,5 +9,6 @@ public record UserProfileData(
         int wins,
         int losses,
         long timePlayed,
-        String photoBase64
+        String photoBase64,
+        List<GameHistory> gamesHistory
 ) {}

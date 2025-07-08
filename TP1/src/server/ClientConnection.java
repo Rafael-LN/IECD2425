@@ -52,6 +52,7 @@ public class ClientConnection extends Thread {
     public void run() {
         try {
             ClientMessageProcessor processor = new ClientMessageProcessor(this, in, userDb);
+            processor.registerGameEndListener();
             processor.start();
         } catch (Exception e) {
             System.err.println("❌ Ligacão terminada para " + username + ": " + e.getMessage());

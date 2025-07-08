@@ -1,6 +1,7 @@
 package server.handler;
 
 import server.ClientConnection;
+import server.handler.GameEndListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,35 @@ public class ActiveGamesManager {
         return activeGames.containsKey(client);
     }
 
+    private static GameEndListener gameEndListener;
+
+    public static void setGameEndListener(GameEndListener listener) {
+        gameEndListener = listener;
+    }
+
+    private static void handleVictory(GameMatch match, ClientConnection winner, ClientConnection loser, int row, int col) {
+        String winMsg = common.XmlMessageBuilder.buildGameEnd(winner.getUsername(), "vitória", "Parabéns, ganhaste!");
+        String loseMsg = common.XmlMessageBuilder.buildGameEnd(winner.getUsername(), "derrota", "Perdeste o jogo.");
+        winner.send(winMsg);
+        if (loser != null) loser.send(loseMsg);
+        long duration = System.currentTimeMillis() - match.getStartTimeMillis();
+        if (gameEndListener != null) {
+            gameEndListener.onGameEnd(winner, loser, "vitória", duration);
+        }
+        removeMatch(winner);
+    }
+
+    private static void handleDraw(GameMatch match, ClientConnection p1, ClientConnection p2) {
+        String drawMsg = common.XmlMessageBuilder.buildGameEnd("", "empate", "O jogo terminou empatado.");
+        p1.send(drawMsg);
+        if (p2 != null) p2.send(drawMsg);
+        long duration = System.currentTimeMillis() - match.getStartTimeMillis();
+        if (gameEndListener != null) {
+            gameEndListener.onGameDraw(p1, p2, duration);
+        }
+        removeMatch(p1);
+    }
+
     public static synchronized void processMove(ClientConnection client, int row, int col) {
         GameMatch match = activeGames.get(client);
         if (match != null) {
@@ -43,16 +73,9 @@ public class ActiveGamesManager {
                 }
                 // Verificar vitória
                 if (match.isVictory(row, col)) {
-                    String winMsg = common.XmlMessageBuilder.buildGameEnd(client.getUsername(), "vitória", "Parabéns, ganhaste!");
-                    String loseMsg = common.XmlMessageBuilder.buildGameEnd(client.getUsername(), "derrota", "Perdeste o jogo.");
-                    client.send(winMsg);
-                    if (opponent != null) opponent.send(loseMsg);
-                    removeMatch(client);
+                    handleVictory(match, client, opponent, row, col);
                 } else if (match.isDraw()) {
-                    String drawMsg = common.XmlMessageBuilder.buildGameEnd("", "empate", "O jogo terminou empatado.");
-                    client.send(drawMsg);
-                    if (opponent != null) opponent.send(drawMsg);
-                    removeMatch(client);
+                    handleDraw(match, client, opponent);
                 }
             } else {
                 client.send(common.XmlMessageBuilder.buildResponse(
