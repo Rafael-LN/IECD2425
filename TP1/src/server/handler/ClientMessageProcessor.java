@@ -213,22 +213,42 @@ public class ClientMessageProcessor {
     private void updateGameHistory(String username, String opponent, String result, long duration) {
         PlayerRecord player = userDb.getPlayer(username);
         if (player == null) return;
-        ArrayList<GameHistory> novaLista = new ArrayList<>(player.gamesHistory());
-        novaLista.add(new GameHistory(
+
+        GameHistory novoJogo = new GameHistory(
             LocalDateTime.now(),
             duration,
             opponent,
             result
-        ));
-        PlayerRecord novoPlayer = new PlayerRecord(
-            player.username(), player.password(), player.age(), player.nationality(),
-            player.photoBase64(),
-            result.equals("win") ? player.wins() + 1 : player.wins(),
-            result.equals("defeat") ? player.losses() + 1 : player.losses(),
-            player.timePlayed() + duration,
-            novaLista
         );
-        userDb.updatePlayer(novoPlayer);
+
+
+        ArrayList<GameHistory> novoHistorico = new ArrayList<>(player.gamesHistory());
+        novoHistorico.add(novoJogo);
+
+
+        long tempoTotal = 0;
+        for (GameHistory jogo : novoHistorico) {
+            tempoTotal += jogo.duration();
+        }
+
+
+        int novasVitorias = result.equals("win") ? player.wins() + 1 : player.wins();
+        int novasDerrotas = result.equals("defeat") ? player.losses() + 1 : player.losses();
+
+
+        PlayerRecord atualizado = new PlayerRecord(
+            player.username(),
+            player.password(),
+            player.age(),
+            player.nationality(),
+            player.photoBase64(),
+            novasVitorias,
+            novasDerrotas,
+            tempoTotal,
+            novoHistorico
+        );
+
+        userDb.updatePlayer(atualizado);
     }
 
     // Handler para pedido de perfil do utilizador
