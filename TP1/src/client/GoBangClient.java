@@ -60,16 +60,16 @@ public class GoBangClient {
         communication.sendLogout(username);
     }
 
+    public void quitMatch(String username) {
+        communication.sendQuitMatch(username);
+    }
+
     public UserProfileData getProfile() {
         return session.getProfile();
     }
 
     public MainWindow getGui() {
         return gui;
-    }
-
-    public ClientSession getSession() {
-        return session;
     }
 
     public static void main(String[] args) {

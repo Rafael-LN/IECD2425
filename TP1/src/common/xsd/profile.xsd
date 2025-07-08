@@ -12,8 +12,11 @@
             <xs:sequence>
                 <xs:element name="username" type="xs:string"/>
                 <xs:element name="photo" type="xs:string"/>
+                <!-- Campos opcionais para TP2 -->
+                <xs:element name="password" type="xs:string" minOccurs="0"/>
+                <xs:element name="nationality" type="xs:string" minOccurs="0"/>
+                <xs:element name="age" type="xs:int" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 </xs:schema>
-

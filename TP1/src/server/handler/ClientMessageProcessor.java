@@ -64,6 +64,7 @@ public class ClientMessageProcessor {
                 case "move" -> handleMove(payload);
                 case "logoutRequest" -> handleLogout(payload);
                 case "getProfileRequest" -> handleGetProfile(payload);
+                case "quitMatch" -> handleQuitMatch(payload);
                 case null -> System.err.println("Erro no tipo de mensagem recebida");
                 default -> System.err.println("Tipo de mensagem desconhecido: " + type);
             }
@@ -226,17 +227,21 @@ public class ClientMessageProcessor {
         novoHistorico.add(novoJogo);
 
 
+        PlayerRecord atualizado = getPlayerRecord(result, novoHistorico, player);
+
+        userDb.updatePlayer(atualizado);
+    }
+
+    private static PlayerRecord getPlayerRecord(String result, ArrayList<GameHistory> novoHistorico, PlayerRecord player) {
         long tempoTotal = 0;
         for (GameHistory jogo : novoHistorico) {
             tempoTotal += jogo.duration();
         }
 
-
         int novasVitorias = result.equals("win") ? player.wins() + 1 : player.wins();
         int novasDerrotas = result.equals("defeat") ? player.losses() + 1 : player.losses();
 
-
-        PlayerRecord atualizado = new PlayerRecord(
+        return new PlayerRecord(
             player.username(),
             player.password(),
             player.age(),
@@ -245,13 +250,10 @@ public class ClientMessageProcessor {
             novasVitorias,
             novasDerrotas,
             tempoTotal,
-            novoHistorico
+                novoHistorico
         );
-
-        userDb.updatePlayer(atualizado);
     }
 
-    // Handler para pedido de perfil do utilizador
     private void handleGetProfile(Element payload) {
         String username = XmlMessageReader.getTextValue(payload, "username");
         if (username == null) {
@@ -264,5 +266,17 @@ public class ClientMessageProcessor {
             return;
         }
         sendUserProfileResponse("Perfil obtido com sucesso.", "getProfile", player);
+    }
+
+    private void handleQuitMatch(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        client.setUsername(username);
+
+        String response = XmlMessageBuilder.buildResponse("success", "Pedido de desistência recebido.", "quitMatch");
+        client.send(response);
+
+        MatchmakingQueue.removeFromQueue(client);
+
+        ActiveGamesManager.endGameForClient(client);
     }
 }

@@ -55,19 +55,14 @@ public class XmlMessageBuilder {
 
     // Serializa o histórico de jogos para XML (String)
     private static String buildGamesHistoryXml(List<GameHistory> gamesHistory) {
-        String xml = "<gamesHistory>";
+        StringBuilder xml = new StringBuilder("<gamesHistory>");
         if (gamesHistory != null) {
             for (GameHistory entry : gamesHistory) {
-                xml += "<game>"
-                    + "<dateTime>" + entry.dateTime() + "</dateTime>"
-                    + "<duration>" + entry.duration() + "</duration>"
-                    + "<opponent>" + entry.opponent() + "</opponent>"
-                    + "<result>" + entry.result() + "</result>"
-                    + "</game>";
+                xml.append("<game>" + "<dateTime>").append(entry.dateTime()).append("</dateTime>").append("<duration>").append(entry.duration()).append("</duration>").append("<opponent>").append(entry.opponent()).append("</opponent>").append("<result>").append(entry.result()).append("</result>").append("</game>");
             }
         }
-        xml += "</gamesHistory>";
-        return xml;
+        xml.append("</gamesHistory>");
+        return xml.toString();
     }
 
     public static String buildFindMatchRequest(String username) {
@@ -135,6 +130,13 @@ public class XmlMessageBuilder {
             + "<timePlayed>" + timePlayed + "</timePlayed>"
             + buildGamesHistoryXml(gamesHistory)
             + "</response>";
+        return wrapWithMessage(content);
+    }
+
+    public static String buildQuitMatchRequest(String username) {
+        String content = "<quitMatch>" +
+                "<username>" + username + "</username>" +
+                "</quitMatch>";
         return wrapWithMessage(content);
     }
 }
