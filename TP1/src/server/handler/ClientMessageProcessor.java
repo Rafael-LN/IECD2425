@@ -12,6 +12,7 @@ import common.GameHistory;
 import java.io.BufferedReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientMessageProcessor {
 
@@ -65,6 +66,7 @@ public class ClientMessageProcessor {
                 case "logoutRequest" -> handleLogout(payload);
                 case "getProfileRequest" -> handleGetProfile(payload);
                 case "quitMatch" -> handleQuitMatch(payload);
+                case "getRankingRequest" -> handleGetRanking();
                 case null -> System.err.println("Erro no tipo de mensagem recebida");
                 default -> System.err.println("Tipo de mensagem desconhecido: " + type);
             }
@@ -278,5 +280,12 @@ public class ClientMessageProcessor {
         MatchmakingQueue.removeFromQueue(client);
 
         ActiveGamesManager.endGameForClient(client);
+    }
+
+    private void handleGetRanking() {
+        List<PlayerRecord> players = new ArrayList<>(userDb.getAllPlayers());
+
+        String response = XmlMessageBuilder.buildRankingResponseArray(players);
+        client.send(response);
     }
 }

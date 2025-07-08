@@ -18,4 +18,12 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="responseArray">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="response" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
