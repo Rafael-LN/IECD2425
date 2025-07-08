@@ -4,7 +4,7 @@ import java.util.List;
 
 public class XmlMessageBuilder {
 
-    
+
     private static String wrapWithMessage(String contentXml) {
         return "<message>" + contentXml + "</message>";
     }
@@ -48,7 +48,7 @@ public class XmlMessageBuilder {
         String content = "<response>" +
                 "<status>" + status + "</status>" +
                 "<message>" + message + "</message>" +
-                "<operation>" + operation + "</operation>"+
+                "<operation>" + operation + "</operation>" +
                 "</response>";
         return wrapWithMessage(content);
     }
@@ -115,20 +115,20 @@ public class XmlMessageBuilder {
     }
 
 
-   public static String buildResponse(String status, String message, String operation, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed, List<GameHistory> gamesHistory) {
+    public static String buildResponse(String status, String message, String operation, String username, String photoBase64, int age, String nationality, int wins, int losses, long timePlayed, List<GameHistory> gamesHistory) {
         String content = "<response>"
-            + "<status>" + status + "</status>"
-            + "<message>" + message + "</message>"
-            + "<operation>" + operation + "</operation>"
-            + "<username>" + username + "</username>"
-            + "<photo>" + (photoBase64 != null ? photoBase64 : "") + "</photo>"
-            + "<age>" + age + "</age>"
-            + "<nationality>" + nationality + "</nationality>"
-            + "<wins>" + wins + "</wins>"
-            + "<losses>" + losses + "</losses>"
-            + "<timePlayed>" + timePlayed + "</timePlayed>"
-            + buildGamesHistoryXml(gamesHistory)
-            + "</response>";
+                + "<status>" + status + "</status>"
+                + "<message>" + message + "</message>"
+                + "<operation>" + operation + "</operation>"
+                + "<username>" + username + "</username>"
+                + "<photo>" + (photoBase64 != null ? photoBase64 : "") + "</photo>"
+                + "<age>" + age + "</age>"
+                + "<nationality>" + nationality + "</nationality>"
+                + "<wins>" + wins + "</wins>"
+                + "<losses>" + losses + "</losses>"
+                + "<timePlayed>" + timePlayed + "</timePlayed>"
+                + buildGamesHistoryXml(gamesHistory)
+                + "</response>";
         return wrapWithMessage(content);
     }
 
@@ -137,5 +137,25 @@ public class XmlMessageBuilder {
                 "<username>" + username + "</username>" +
                 "</quitMatch>";
         return wrapWithMessage(content);
+    }
+
+    public static String buildRankingResponseArray(List<server.database.PlayerRecord> players) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<responseArray>");
+        for (server.database.PlayerRecord player : players) {
+            sb.append("<response>")
+                    .append("<status>success</status>")
+                    .append("<message>ranking</message>")
+                    .append("<operation>getRanking</operation>")
+                    .append("<username>").append(player.username()).append("</username>")
+                    .append("<photo>").append(player.photoBase64()).append("</photo>")
+                    .append("<nationality>").append(player.nationality()).append("</nationality>")
+                    .append("<wins>").append(player.wins()).append("</wins>")
+                    .append("<losses>").append(player.losses()).append("</losses>")
+                    .append("<timePlayed>").append(player.timePlayed()).append("</timePlayed>");
+            sb.append("</response>");
+        }
+        sb.append("</responseArray>");
+        return sb.toString();
     }
 }

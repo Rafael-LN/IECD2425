@@ -20,11 +20,13 @@
                 <xs:element ref="quitMatch"/>
                 <xs:element ref="player"/>
                 <xs:element ref="response"/>
+                <xs:element ref="responseArray"/>
                 <xs:element ref="updateProfileRequest"/>
                 <xs:element ref="getProfileRequest"/>
                 <xs:element ref="gameEnd"/>
                 <xs:element ref="findMatch"/>
                 <xs:element ref="cancelMatch"/>
+                <xs:element name="getRankingRequest" type="xs:string"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>

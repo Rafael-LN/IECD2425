@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -113,5 +114,12 @@ public class UserDatabase implements Serializable {
     public synchronized void updatePlayer(PlayerRecord player) {
         users.put(player.username(), player);
         saveToFile();
+    }
+
+    /**
+     * Devolve uma lista de todos os jogadores registados.
+     */
+    public synchronized Collection<PlayerRecord> getAllPlayers() {
+        return users.values();
     }
 }
