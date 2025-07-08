@@ -23,9 +23,9 @@ public class ClientCommunicationHandler {
     }
 
     public void connect() {
-
-        try (Socket socket = new Socket(serverIp, serverPort)) {
-            out = new PrintWriter(socket.getOutputStream(), true);
+        try {
+            Socket socket = new Socket(serverIp, serverPort);
+                out = new PrintWriter(socket.getOutputStream(), true);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
