@@ -1,7 +1,7 @@
 package gui.enums;
 
 public enum PanelType {
-    AUTHENTICATION("GoBang Game", 400, 200),
+    AUTHENTICATION("GoBang Game", 400, 210),
     LOGIN("Login", 400, 250),
     REGISTRATION("Player Registration", 600, 300),
     VIEW_PROFILE("View Profile", 950, 500),

@@ -9,38 +9,53 @@ import java.awt.*;
 public class PlayerAuthentication extends JPanel {
 
     public PlayerAuthentication(MainWindow gui) {
-        setLayout(new GridBagLayout());
-        setBackground(new Color(255, 250, 240)); // Pastel background
+        setBackground(new Color(255, 250, 240)); // Fundo pastel
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        Font titleFont = new Font("Roboto", Font.BOLD, 16);
-        Font subtitleFont = new Font("Roboto", Font.PLAIN, 12);
+        // Fonte global para o painel
+        Font titleFont = new Font("Roboto", Font.BOLD, 20);
+        Font subtitleFont = new Font("Roboto", Font.PLAIN, 13);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-
+        // Título
         JLabel titleLabel = GuiUtils.createLabel("Welcome to GoBang", SwingConstants.CENTER, titleFont, null);
-        add(titleLabel, gbc);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(Box.createVerticalStrut(32)); // Espaço superior
+        add(titleLabel);
 
-        gbc.gridy++;
+        // Subtítulo
         JLabel subtitleLabel = GuiUtils.createLabel("Please login or register to continue", SwingConstants.CENTER, subtitleFont, null);
-        add(subtitleLabel, gbc);
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(Box.createVerticalStrut(8));
+        add(subtitleLabel);
 
-        // Botões
-        gbc.gridy++;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
+        add(Box.createVerticalStrut(16));
+        JSeparator separator = new JSeparator();
+        separator.setMaximumSize(new Dimension(240, 4));
+        add(separator);
+        separator.setVisible(false);
 
-        JButton loginButton = GuiUtils.createButton("Login", new Color(173, 216, 230), e -> gui.changePanel(PanelType.LOGIN));
-        add(loginButton, gbc);
 
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.WEST;
+        add(Box.createVerticalGlue());
 
-        JButton registerButton = GuiUtils.createButton("Register", new Color(240, 128, 128), e -> gui.changePanel(PanelType.REGISTRATION));
-        add(registerButton, gbc);
+        // Painel de botões centralizado
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 18, 0));
+
+        JButton loginButton = GuiUtils.createButton("Login", new Color(173, 216, 230),
+                _ -> gui.changePanel(PanelType.LOGIN));
+        loginButton.setFont(new Font("Roboto", Font.PLAIN, 15));
+
+        JButton registerButton = GuiUtils.createButton("Register", new Color(240, 128, 128),
+                _ -> gui.changePanel(PanelType.REGISTRATION));
+        registerButton.setFont(new Font("Roboto", Font.PLAIN, 15));
+
+        buttonPanel.add(loginButton);
+        buttonPanel.add(registerButton);
+
+        add(buttonPanel);
+
+        add(Box.createVerticalGlue());
+        add(Box.createVerticalStrut(32));
     }
 }
