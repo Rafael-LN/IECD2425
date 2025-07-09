@@ -52,26 +52,17 @@ public class ClientMessageHandler {
                         }
 
                         case "logout" -> {
-                            System.out.println("✅ Logout realizado com sucesso.");
                             session.logout();
                             gui.onLogoutSuccess();
                         }
 
                         case "updateProfile" -> {
-                            System.out.println("✅ Foto de perfil atualizada com sucesso.");
                             String updatedPhoto = XmlMessageReader.getTextValue(payload, "photo");
                             if (updatedPhoto != null && !updatedPhoto.isEmpty()) {
                                 session.updatePhoto(updatedPhoto);
                             }
                         }
 
-                        case "cancelMatch" -> {
-                            System.out.println("❌ Matchmaking cancelado com sucesso.");
-                        }
-
-                        case "findMatch" -> {
-                            System.out.println("🔎 Pedido de matchmaking enviado. Aguardando emparelhamento...");
-                        }
                         case "getProfile" -> {
                             populateUserProfile(payload);
                             gui.onProfileView(session.getProfile());

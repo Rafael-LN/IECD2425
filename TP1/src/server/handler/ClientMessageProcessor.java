@@ -62,6 +62,7 @@ public class ClientMessageProcessor {
                 case "registerRequest" -> handleRegister(payload);
                 case "updateProfileRequest" -> handleUpdateProfile(payload);
                 case "findMatch" -> handleFindMatch(payload);
+                case "cancelMatch" -> handleCancelMatch(payload);
                 case "move" -> handleMove(payload);
                 case "logoutRequest" -> handleLogout(payload);
                 case "getProfileRequest" -> handleGetProfile(payload);
@@ -172,10 +173,30 @@ public class ClientMessageProcessor {
         String username = XmlMessageReader.getTextValue(payload, "username");
         client.setUsername(username);
 
-        String response = XmlMessageBuilder.buildFindMatchRequest(username);
+        System.out.println("🔍 Matchmaking request from " + username);
+
+        String response = XmlMessageBuilder.buildResponse(
+            "success",
+            "Matchmaking request received. Waiting for an opponent...",
+            "findMatch"
+        );
         client.send(response);
 
         MatchmakingQueue.addToQueue(client);
+    }
+
+    private void handleCancelMatch(Element payload) {
+        String username = XmlMessageReader.getTextValue(payload, "username");
+        client.setUsername(username);
+
+        String response = XmlMessageBuilder.buildResponse(
+            "success",
+            "❌ Matchmaking cancelled successfully.",
+            "cancelMatch"
+        );
+        client.send(response);
+
+        MatchmakingQueue.removeFromQueue(client);
     }
 
     private void handleMove(Element payload) {

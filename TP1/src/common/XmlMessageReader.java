@@ -65,7 +65,7 @@ public class XmlMessageReader {
     // Valida um XML recebido contra um XSD
     public static boolean validateXml(String xml, String xsdPath) {
         try {
-            SchemaFactory factory = javax.xml.validation.SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+            SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
             Schema schema = factory.newSchema(new File(xsdPath));
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(new StringReader(xml)));
